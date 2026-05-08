@@ -1,0 +1,263 @@
+/* =========================================
+   全局變數設定 (色彩、字體、間距)
+========================================= */
+:root {
+    /* 色彩配置：環保專業風，降低視覺疲勞 */
+    --primary-color: #2E7D32;
+    /* 沉穩綠 */
+    --primary-hover: #1B5E20;
+    /* 深翠綠 */
+    --bg-color: #F4F6F8;
+    /* 淺灰白背景，減少眩光 */
+    --text-main: #333333;
+    /* 深灰文字，避免純黑的強烈對比 */
+    --text-muted: #666666;
+    /* 次要資訊文字 */
+    --white: #FFFFFF;
+    --border-color: #E0E0E0;
+    /* 柔和的邊框色 */
+
+    /* 導覽列高度固定，方便計算 */
+    --navbar-height: 60px;
+}
+
+/* =========================================
+   基礎重置 (Reset) 與全域設定
+========================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    /* === 新增：禁止文字反白選取 === */
+    -webkit-user-select: none;
+    /* 支援 Safari 瀏覽器 */
+    -moz-user-select: none;
+    /* 支援 Firefox 瀏覽器 */
+    -ms-user-select: none;
+    /* 支援早期 IE/Edge */
+    user-select: none;
+    /* 標準語法 */
+    /* 使用系統預設字體，不載入外部字型以追求最高效能 */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Microsoft JhengHei", sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.6;
+    /* 預留導覽列的空間，避免內容被遮擋 */
+    padding-top: var(--navbar-height);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul {
+    list-style: none;
+}
+
+/* =========================================
+   共用頂部導覽列 (Navbar)
+========================================= */
+#global-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--navbar-height);
+    background-color: var(--white);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    z-index: 1000;
+    /* 確保導覽列永遠在最上層 */
+}
+
+#global-navbar .logo {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+#global-navbar .nav-links {
+    display: flex;
+    gap: 20px;
+}
+
+#global-navbar .nav-links a {
+    font-size: 1rem;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* 導覽列互動效果 */
+#global-navbar .nav-links a:hover,
+#global-navbar .nav-links a.active {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+/* =========================================
+   全域 RWD 基礎設定 (針對平板與手機)
+========================================= */
+@media screen and (max-width: 768px) {
+    #global-navbar {
+        padding: 0 10px;
+    }
+
+    #global-navbar .logo {
+        font-size: 1.1rem;
+    }
+
+    #global-navbar .nav-links {
+        gap: 5px;
+    }
+
+    #global-navbar .nav-links a {
+        font-size: 0.9rem;
+        padding: 6px 8px;
+    }
+}
+
+/* 頁尾基本樣式 */
+.site-footer {
+    text-align: center;
+    /* 文字置中 */
+    padding: 15px 0;
+    /* 縮減上下間距 */
+    font-size: 0.85rem;
+    /* 縮小字體 (約 13-14px) */
+    color: #757575;
+    /* 使用灰色弱化視覺層級 */
+
+    /* 如果你的 <body> 有設定 display: flex 和 min-height: 100vh，
+       加上 margin-top: auto 可以確保 footer 永遠貼在畫面最底部 */
+    margin-top: auto;
+}
+
+.site-footer p {
+    margin: 0;
+    /* 移除段落預設的留白，極致節省空間 */
+}
+
+/* =========================================
+   資料來源頁尾設計 (置左)
+========================================= */
+.site-footer.source-footer {
+    max-width: 1200px;
+    /* 將 margin-top 設為負值 (-1.5rem)，強制把整個區塊往上拉近表格 */
+    margin: -1.5rem auto 0 auto;
+    /* 將上方的 padding 縮小到 5px，下方保持 15px */
+    padding: 5px 20px 15px 20px;
+    text-align: left;
+}
+
+/* 來源超連結的美化 */
+.site-footer.source-footer a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: bold;
+    /* 將字體明顯放大 (原本是 0.95rem，現在改為 1.15rem，約等於 18px~19px) */
+    font-size: 1.15rem;
+    transition: color 0.2s ease;
+}
+
+.site-footer.source-footer a:hover {
+    color: var(--primary-hover);
+    text-decoration: underline;
+}
+
+/* =========================================
+   手機模式切換按鈕 (右上角懸浮)
+========================================= */
+#mobile-mode-btn {
+    position: fixed;
+    top: 80px;
+    /* 避開上方 60px 的導覽列 */
+    right: 20px;
+    z-index: 9999;
+    padding: 8px 16px;
+    background-color: var(--white);
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+#mobile-mode-btn:hover {
+    background-color: #e8f5e9;
+}
+
+/* 按下後的狀態 */
+#mobile-mode-btn.active {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-hover);
+}
+
+/* =========================================
+   手機版：表格橫向滑動 (無卷軸、純淨資料版)
+========================================= */
+@media screen and (max-width: 768px) {
+    
+    /* 1. 開啟橫向滑動功能，並隱藏卷軸 */
+    .table-responsive-wrapper {
+        display: block !important;
+        width: 100% !important;
+        overflow-x: auto !important; 
+        -webkit-overflow-scrolling: touch !important;
+        margin-bottom: 20px;
+        
+        /* 隱藏卷軸 (支援 IE, Edge, Firefox) */
+        -ms-overflow-style: none !important;
+        scrollbar-width: none !important;
+    }
+    
+    /* 隱藏卷軸 (支援 Chrome, Safari, Opera) */
+    .table-responsive-wrapper::-webkit-scrollbar {
+        display: none !important;
+    }
+
+    /* 2. 確保表格維持傳統樣式，不被壓縮 */
+    .table-responsive-wrapper table {
+        display: table !important;
+        width: 100% !important;
+        min-width: 600px !important; 
+    }
+
+    .table-responsive-wrapper thead {
+        display: table-header-group !important; 
+    }
+
+    .table-responsive-wrapper tbody {
+        display: table-row-group !important;
+    }
+
+    .table-responsive-wrapper tr {
+        display: table-row !important;
+    }
+
+    /* 3. 儲存格設定：強制橫排不換行 */
+    .table-responsive-wrapper th,
+    .table-responsive-wrapper td {
+        display: table-cell !important; 
+        white-space: nowrap !important; 
+        padding: 10px !important;
+        vertical-align: middle !important;
+        text-align: left !important;
+    }
+
+    /* 4. 清除任何殘留的偽元素(重疊文字) */
+    .table-responsive-wrapper td::before {
+        content: none !important;
+        display: none !important;
+    }
+}

@@ -1,0 +1,86 @@
+/* =========================================
+   主頁排版與內容區塊 (極簡版)
+========================================= */
+#main-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+}
+
+#main-content h1 {
+    text-align: center;
+    margin-bottom: 3rem;
+    color: var(--primary-color);
+    font-size: 2rem;
+}
+
+/* =========================================
+   主頁：7 大主題網格導覽區
+========================================= */
+.dashboard-grid {
+    display: grid;
+    /* 電腦版：排成一行 3 個或 4 個，自動適應寬度 */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+/* 共用卡片樣式 */
+.dashboard-card {
+    background-color: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 160px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+
+.dashboard-card h2 {
+    color: var(--text-main);
+    font-size: 1.4rem;
+    margin: 0;
+    border: none;
+}
+
+/* 已啟用的卡片互動效果 */
+.dashboard-card.active-card:hover {
+    border-color: var(--primary-color);
+    background-color: #e8f5e9;
+    transform: translateY(-5px); /* 輕微上浮效果 */
+    box-shadow: 0 8px 15px rgba(46, 125, 50, 0.1);
+}
+
+.dashboard-card.active-card h2 {
+    color: var(--primary-color);
+}
+
+/* 建置中的卡片樣式 (視覺弱化) */
+.dashboard-card.coming-soon {
+    background-color: #fcfcfc;
+    border-color: #eee;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.dashboard-card.coming-soon h2 {
+    color: #999;
+}
+
+/* 建置中標籤 */
+.badge {
+    position: absolute;
+    bottom: 15px;
+    font-size: 0.8rem;
+    color: #fff;
+    background-color: #bbb;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+}

@@ -1,0 +1,534 @@
+/* =========================================
+   子頁面排版與篩選器
+========================================= */
+#facilities-content {
+    max-width: 1200px; /* 表格需要較寬的空間 */
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+#city-dropdown {
+    padding: 0.5rem;
+    font-size: 1rem;
+    margin-left: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+/* =========================================
+   緊湊型頂部控制列 (選單左、標題與日期中、選單右)
+========================================= */
+.page-header-compact {
+    display: grid;
+    /* 左右兩側各佔 1 份彈性空間，中間依內容自動撐開，確保標題絕對置中 */
+    grid-template-columns: 1fr auto 1fr; 
+    align-items: center;
+    background-color: var(--white);
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* 強制靠左 */
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.header-center {
+    display: flex;
+    flex-direction: column; /* 讓標題與日期上下排列 */
+    align-items: center;    /* 垂直置中 */
+    gap: 5px;               /* 標題與日期之間的微小間距 */
+    text-align: center;
+}
+
+.header-center h1 {
+    margin: 0;
+    font-size: 1.6rem;
+    color: var(--text-main);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* 強制靠右 */
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* 針對平板與手機的 RWD 微調 (螢幕太小時全部改為垂直置中排列) */
+@media screen and (max-width: 850px) {
+    .page-header-compact {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1.5rem 1rem;
+    }
+    .header-left, .header-center, .header-right {
+        justify-content: center;
+    }
+}
+
+/* =========================================
+   資料表格基礎設計 (電腦版) - 終極排版修正
+========================================= */
+.table-responsive-wrapper {
+    width: 100%;
+    background-color: var(--white); 
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    /* 加入 transform 讓瀏覽器嚴格執行 overflow: hidden */
+    transform: translateZ(0); 
+    overflow: hidden; 
+}
+
+#facilities-table {
+    width: 100%;
+    /* 改回 collapse，讓線條與外框完美貼合 */
+    border-collapse: collapse; 
+    text-align: left;
+    margin: 0; 
+}
+
+#facilities-table th, 
+#facilities-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* 固定表頭 */
+#facilities-table th, 
+#detail-table th {  /* 👈 只要補上這行 */
+    background-color: var(--primary-color);
+    color: var(--white);
+    position: sticky;
+    top: var(--navbar-height); 
+    z-index: 10;
+    white-space: nowrap;
+    border-top: none; 
+    border-radius: 0 !important; /* 強制直角，讓它變成橫跨卡片的漂亮綠帶 */
+}
+
+/* 圓角設定 (緊接在上面的下方) */
+#facilities-table th:first-child, #detail-table th:first-child { /* 👈 補上 */
+    border-top-left-radius: 8px;
+}
+#facilities-table th:last-child, #detail-table th:last-child { /* 👈 補上 */
+    border-top-right-radius: 8px;
+}
+
+/* 移除最後一列的底線 */
+#facilities-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* =========================================
+   標題與日期同行排版
+========================================= */
+
+.update-date-inline {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+/* =========================================
+   卡片內標題列 (電腦左右並排 / 手機垂直折疊)
+========================================= */
+.detail-header {
+    display: flex;
+    flex-direction: row;            /* 電腦版：水平排列 */
+    align-items: center;            /* 垂直置中 */
+    justify-content: space-between; /* 左右推開 */
+    padding: 1.5rem;
+    background-color: var(--white);
+    border-bottom: 1px solid #f0f0f0;
+    gap: 15px;
+    flex-wrap: wrap;                /* 如果螢幕縮小則允許折行 */
+}
+
+/* 左側標題區 */
+.header-main-info {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* 靠左 */
+    gap: 15px;
+    width: auto;                 /* 【關鍵】移除 100% 限制，只佔需要的寬度 */
+}
+
+.header-main-info h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    text-align: left;
+}
+
+/* 統計數據小標籤 */
+.stats-text {
+    font-weight: bold;
+    color: var(--primary-color);
+    font-size: 1rem;
+    background-color: #e8f5e9;
+    padding: 4px 12px;
+    border-radius: 20px;
+    white-space: nowrap;         /* 避免標籤文字折行 */
+}
+
+/* 右側操作區 */
+.header-action-area {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;   /* 靠右 */
+    gap: 15px;
+    width: auto;                 /* 【關鍵】移除 100% 限制 */
+}
+
+.header-action-area label {
+    font-weight: bold;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.header-action-area select {
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    background-color: var(--white);
+    cursor: pointer;
+}
+
+/* 手機版適應：螢幕小於 900px 時改為上下排列靠左 */
+@media screen and (max-width: 900px) {
+    .detail-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .header-action-area {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        margin-top: 10px;
+    }
+}
+/* =========================================
+   專屬排行榜的「瘦身置中」樣式
+========================================= */
+#facilities-table.ranking-table {
+    width: 60% !important;         /* 電腦版縮小寬度為 60% */
+    max-width: 800px;              /* 設定最大寬度，防螢幕過大時跑版 */
+    margin: 20px auto !important;  /* 關鍵：上下留白 20px，左右 auto 自動置中 */
+    table-layout: auto !important; /* 讓欄位依照內容(如數字長度)彈性分配 */
+}
+
+/* 針對排行榜的文字微調 */
+#facilities-table.ranking-table th,
+#facilities-table.ranking-table td {
+    white-space: nowrap !important; /* 排行榜資料短，不換行更乾淨 */
+    text-align: center !important;  /* 確保名次與數字絕對置中 */
+}
+
+/* RWD：手機與平板版恢復滿版，避免畫面太小字擠在一起 */
+@media screen and (max-width: 768px) {
+    #facilities-table.ranking-table {
+        width: 100% !important;
+        margin: 0 auto !important;
+    }
+}
+/* =========================================
+   證書到期警示標章
+========================================= */
+.expire-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: var(--white);
+    margin-left: 8px;
+    white-space: nowrap; /* 防止標籤文字斷行 */
+}
+
+/* 即將到期：橘色警告 */
+.expire-badge.warning {
+    background-color: #F57C00;
+}
+
+/* 已過期：紅色危險 */
+.expire-badge.expired {
+    background-color: #D32F2F;
+}
+/* =========================================
+   精簡型狀態提醒 (位於標題列右側)
+========================================= */
+.status-summary-compact {
+    display: flex;
+    gap: 10px;
+    background-color: transparent; /* 移除背景色，讓它與標題列融合 */
+}
+
+.status-summary-compact .summary-item {
+    display: flex;
+    align-items: center;
+    padding: 4px 10px; /* 縮小內距以符合標題列高度 */
+    border-radius: 6px;
+    font-size: 0.85rem; /* 稍微縮小字體 */
+    white-space: nowrap;
+}
+
+/* 保持原本的顏色邏輯 */
+.summary-item.warning {
+    color: #E65100;
+    background-color: #FFF3E0;
+    border: 1px solid #FFE0B2;
+}
+
+.summary-item.expired {
+    color: #C62828;
+    background-color: #FFEBEE;
+    border: 1px solid #FFCDD2;
+}
+
+/* 狀態良好時顯示淡淡的綠色，不干擾視覺 */
+.summary-item.safe {
+    color: var(--primary-color);
+    background-color: #e8f5e9;
+    font-weight: normal;
+}
+
+/* 確保 header-action-area 的元素水平對齊 */
+.header-action-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+/* =========================================
+   表格內：日期右側的狀態小圖示
+========================================= */
+.status-icon {
+    font-size: 1rem;
+    margin-left: 6px;
+    cursor: help; /* 滑鼠移過去會變成問號指標，提示使用者可以看 title */
+}
+
+.status-icon.warning {
+    color: #F57C00;
+}
+
+.status-icon.expired {
+    color: #D32F2F;
+}
+/* === 分頁按鈕樣式 === */
+.pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+    padding: 15px;
+}
+
+.page-btn {
+    padding: 8px 16px;
+    background-color: #2e7d32; /* 配合綠生活的綠色 */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+
+.page-btn:hover:not(:disabled) {
+    background-color: #1b5e20;
+}
+
+.page-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.page-info {
+    font-weight: bold;
+    color: #333;
+}
+/* =========================================
+   表格防撐破與換行設定 (取代舊版瘦身設定)
+========================================= */
+
+/* 2. 表格本體：設定為固定排版 (table-layout: fixed)，強制寬度 100% */
+#facilities-table {
+    table-layout: fixed !important; /* 啟動固定欄寬模式 */
+    width: 100% !important;
+    border-collapse: collapse;
+    margin: 0;
+}
+
+/* 3. 表格內的儲存格：強制允許換行 */
+#facilities-table th,
+#facilities-table td {
+    white-space: normal !important; /* 強制覆蓋任何不換行設定 */
+    word-break: break-word;         /* 遇到長地址自動折行 */
+    overflow-wrap: break-word;
+    vertical-align: middle;         /* 多行時垂直置中 */
+    padding: 12px 15px;             /* 適中的內距 */
+    text-align: center;             /* 預設內容置中 */
+}
+
+/* 讓長度較長的名子與地址靠左對齊，比較好閱讀 (使用 data-label 來精準選擇) */
+#facilities-table td[data-label="聯絡地址"],
+#facilities-table td[data-label="旅宿名稱"],
+#facilities-table td[data-label="設施場所名稱"],
+#facilities-table td[data-label="申請單位全銜"] {
+    text-align: left;
+}
+/* 標章等級的標籤樣式 */
+/* =========================================
+   標章等級樣式 (放大與 RWD 微調)
+========================================= */
+.badge-level {
+    display: inline-flex;       /* 改用 flex 讓圖示和文字完美對齊 */
+    align-items: center;
+    gap: 6px;                   /* 圖示和文字之間的距離 */
+    padding: 6px 12px;          /* 稍微加大內縮，讓背景色區塊更好看 */
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 1.1rem;          /* 【整體字體放大】 */
+}
+
+/* 特別讓圖示再大一點點，更有重點感 */
+.level-icon {
+    font-size: 1.3rem;          
+}
+
+/* =========================================
+   手機版特製：節省空間，隱藏文字只留圖示
+========================================= */
+@media screen and (max-width: 768px) {
+    .level-text {
+        display: none;          /* 螢幕變小時，直接把文字隱藏 */
+    }
+    
+    .badge-level {
+        padding: 8px;           /* 因為只剩圖示，微調背景區塊大小 */
+        justify-content: center;
+    }
+
+    .level-icon {
+        font-size: 1.6rem;      /* 手機上圖示再稍微放大，方便閱讀 */
+        margin: 0;
+    }
+}
+
+/* 用 CSS 屬性選擇器，根據文字自動上色 */
+span.badge-level:contains('金級'),
+td[data-label="標章等級"]:has(:contains('金')) span {
+    background-color: #fef08a; /* 金黃色 */
+    color: #854d0e;
+}
+
+td[data-label="標章等級"]:has(:contains('銀')) span {
+    background-color: #e5e7eb; /* 銀灰色 */
+    color: #374151;
+}
+
+td[data-label="標章等級"]:has(:contains('銅')) span {
+    background-color: #fed7aa; /* 銅橘色 */
+    color: #9a3412;
+}
+/* 手動搜尋超連結樣式 */
+.manual-search-link {
+    color: #0000FF !important;       /* 強制顯示純藍色 */
+    text-decoration: underline !important; /* 強制顯示底線 */
+    font-weight: bold;               /* 加粗方便識別 */
+    cursor: pointer;
+}
+
+.manual-search-link:hover {
+    color: #0000AA !important;       /* 滑鼠移上去變深藍色 */
+}
+/* ==========================================
+   自訂彈出視窗樣式
+   ========================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* 半透明黑底 */
+    /* 這裡原本設定為 flex，但 HTML 中先用 display: none 隱藏，將由 JS 控制顯示 */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* 確保浮在最上層 */
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 24px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px; /* 電腦版最大寬度 */
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    box-sizing: border-box;
+}
+
+.modal-header {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 12px;
+    color: #d9534f; /* 警告用的紅色 */
+}
+
+.modal-body {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 24px;
+    line-height: 1.6;
+    white-space: pre-line; /* 重要：讓 JS 傳入的 \n 可以正確換行 */
+}
+
+.modal-btn {
+    background-color: #007bff; /* 按鈕主色 */
+    color: white;
+    border: none;
+    padding: 10px 32px;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.modal-btn:hover {
+    background-color: #0056b3;
+}
+/* =========================================
+   綠色夥伴 - 歷年列表互動效果
+========================================= */
+/* 讓帶有此 class 的表格列具有點擊感 */
+.clickable-row {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* 電腦版：滑鼠移上去時，讓整列儲存格背景變成淺綠色 */
+.clickable-row:hover td {
+    background-color: #e8f5e9 !important; 
+}
+
+/* 針對彈出視窗 (Modal) 的淡入動畫微調 */
+.chart-modal-content {
+    animation: modalFadeIn 0.3s ease-out forwards;
+}
+
+@keyframes modalFadeIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(-20px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
