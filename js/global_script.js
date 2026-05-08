@@ -1,0 +1,210 @@
+// global_script.js - 版本：v1.7 (整合表格下載與手機版響應式外框)
+
+document.addEventListener('DOMContentLoaded', () => {
+    // === 1. 原有的導覽列狀態亮燈邏輯 ===
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('#global-navbar .nav-links a');
+
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (currentPath.includes(link.getAttribute('href'))) {
+            link.classList.add('active');
+        }
+    });
+
+    // === 2. 禁止滑鼠右鍵與快捷鍵設定 ===
+    document.addEventListener('contextmenu', (e) => {
+        e.preventDefault(); 
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'F12' || (e.ctrlKey && (e.key === 'c' || e.key === 'C' || e.key === 'u' || e.key === 'U'))) {
+            e.preventDefault();
+        }
+    });
+
+    document.addEventListener('dragstart', (e) => {
+        if (e.target.tagName === 'IMG') {
+            e.preventDefault();
+        }
+    });
+
+    // === 3. 啟動：全域表格下載 CSV 邏輯 ===
+    initTableDownload();
+
+    // === 4. 啟動：自動為所有表格加上響應式滑動容器 (手機版防破圖) ===
+    const tables = document.querySelectorAll("table");
+    tables.forEach(table => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "table-responsive";
+        // 將外框插入到 table 之前，並將 table 搬進去
+        table.parentNode.insertBefore(wrapper, table);
+        wrapper.appendChild(table);
+    });
+    // === 5. 新增：手機模式懸浮按鈕與跨頁記憶邏輯 ===
+    initMobileModeToggle();
+});
+
+// ==========================================
+// 以下為表格下載的核心函數 (保持你原本的優秀邏輯，無需更動)
+// ==========================================
+function initTableDownload() {
+    const pageTitle = document.title.trim() || '未命名網頁';
+    const tables = document.querySelectorAll('table');
+
+    tables.forEach((table, index) => {
+        // 防呆機制：避免重複加入按鈕
+        if (table.hasAttribute('data-download-added')) return;
+        table.setAttribute('data-download-added', 'true');
+
+        const headerRow = table.querySelector('thead tr') || table.querySelector('tr');
+        if (!headerRow) return;
+
+        const headerCells = headerRow.querySelectorAll('th, td');
+        if (headerCells.length === 0) return;
+
+        const lastCell = headerCells[headerCells.length - 1];
+
+        const downloadBtn = document.createElement('span');
+        downloadBtn.innerHTML = ' 📥';
+        downloadBtn.style.cursor = 'pointer';
+        downloadBtn.style.marginLeft = '10px';
+        downloadBtn.style.fontSize = '1.1em';
+        downloadBtn.title = '點擊下載表格資料'; 
+
+        lastCell.appendChild(downloadBtn);
+
+        downloadBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+
+            // 1. 在點擊的瞬間尋找表格名稱
+            let tableTitle = `表格${index + 1}`;
+            const caption = table.querySelector('caption');
+
+            if (caption) {
+                tableTitle = caption.innerText.trim();
+            } else {
+                let currentElement = table;
+                let foundHeading = false;
+
+                while (currentElement && currentElement !== document.body && !foundHeading) {
+                    let prevSibling = currentElement.previousElementSibling;
+                    while (prevSibling) {
+                        if (/^H[1-6]$/.test(prevSibling.tagName)) {
+                            tableTitle = prevSibling.innerText.trim();
+                            foundHeading = true;
+                            break;
+                        }
+                        const innerHeading = prevSibling.querySelector('h1, h2, h3, h4, h5, h6');
+                        if (innerHeading) {
+                            tableTitle = innerHeading.innerText.trim();
+                            foundHeading = true;
+                            break;
+                        }
+                        prevSibling = prevSibling.previousElementSibling;
+                    }
+                    currentElement = currentElement.parentElement;
+                }
+            }
+
+            tableTitle = tableTitle.replace(/[\\/:*?"<>|\n\r]/g, '');
+
+            // 動態抓取「年份」下拉選單的值
+            const selects = document.querySelectorAll('select');
+            selects.forEach(select => {
+                const option = select.options[select.selectedIndex];
+                if (option) {
+                    const optionText = option.innerText.trim();
+                    if (optionText.includes('年') || /^\d{4}$/.test(optionText)) {
+                        tableTitle += `_${optionText}`;
+                    }
+                }
+            });
+
+            const today = new Date();
+            const dateString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+            const fileName = `${pageTitle}_${tableTitle}_${dateString}.csv`;
+
+            // 2. 處理 CSV 資料提取
+            let csvContent = '\uFEFF';
+            if (table.dataset.fullCsv) {
+                csvContent += table.dataset.fullCsv;
+            } else {
+                const rows = table.querySelectorAll('tr');
+                rows.forEach(row => {
+                    const cols = row.querySelectorAll('th, td');
+                    const rowData = [];
+
+                    cols.forEach(col => {
+                        const cloneCell = col.cloneNode(true);
+
+                        const spans = cloneCell.querySelectorAll('span');
+                        spans.forEach(span => {
+                            if (span.innerText.includes('📥') || span.title.includes('下載')) {
+                                span.remove();
+                            }
+                        });
+
+                        const mediaElements = cloneCell.querySelectorAll('img, svg, i, em');
+                        mediaElements.forEach(el => el.remove());
+
+                        cloneCell.innerHTML = cloneCell.innerHTML
+                            .replace(/<br\s*[\/]?>/gi, ', ')                
+                            .replace(/<\/span>\s*<span/gi, '</span>, <span') 
+                            .replace(/<\/div>\s*<div/gi, '</div>, <div');    
+
+                        let text = cloneCell.innerText;
+                        text = text.replace(/[\r\n]+/g, ' ').replace(/\s{2,}/g, ' ').trim();
+                        text = text.replace(/,\s*,/g, ', ').replace(/^,|,$/g, '').trim();
+                        text = text.replace(/"/g, '""');
+                        if (text.includes(',') || text.includes('"')) {
+                            text = `"${text}"`;
+                        }
+                        rowData.push(text);
+                    });
+                    csvContent += rowData.join(',') + '\n';
+                });
+            }
+            // 3. 觸發下載
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', fileName);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        });
+    });
+}
+function initMobileModeToggle() {
+    // 1. 動態在網頁右上角建立切換按鈕
+    const toggleBtn = document.createElement('button');
+    toggleBtn.id = 'mobile-mode-btn';
+    toggleBtn.innerHTML = '📱 手機模式';
+    
+    // 2. 讀取瀏覽器的「短期記憶」，檢查上次是不是開著手機模式
+    const isMobileMode = localStorage.getItem('isMobileMode') === 'true';
+    
+    // 如果上次是開著的，就在 <body> 貼上標籤，並改變按鈕外觀
+    if (isMobileMode) {
+        document.body.classList.add('mobile-mode');
+        toggleBtn.classList.add('active');
+    }
+
+    // 3. 設定按鈕點擊事件
+    toggleBtn.addEventListener('click', () => {
+        // 切換 body 的 class (有就拿掉，沒有就加上)
+        const currentMode = document.body.classList.toggle('mobile-mode');
+        
+        // 切換按鈕本身的視覺樣式
+        toggleBtn.classList.toggle('active');
+        
+        // 將最新狀態寫入瀏覽器記憶中
+        localStorage.setItem('isMobileMode', currentMode);
+    });
+
+    // 4. 將按鈕放入網頁中
+    document.body.appendChild(toggleBtn);
+}
