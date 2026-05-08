@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>臺灣綠生活資訊站 - 國家企業環保獎</title>
+
+    <link rel="stylesheet" href="css/global_style.css">
+    <link rel="stylesheet" href="css/facilities_style.css">
+    <style>
+        /* 專屬獎項標籤顏色補強 (基於你的附圖需求) */
+        .badge-giant { background-color: #6d28d9 !important; color: white !important; } /* 巨擘獎 - 深紫色 */
+        .badge-gold { background-color: #fef08a !important; color: #854d0e !important; }  /* 金級獎 - 金黃色 */
+        .badge-silver { background-color: #e5e7eb !important; color: #374151 !important; }/* 銀級獎 - 銀灰色 */
+        .badge-bronze { background-color: #fed7aa !important; color: #9a3412 !important; }/* 銅級獎 - 銅橘色 */
+        .badge-entry { background-color: #f3f4f6 !important; color: #6b7280 !important; } /* 入圍獎 - 淺灰色 */
+    </style>
+</head>
+
+<body>
+
+    <nav id="global-navbar">
+        <div class="logo">臺灣綠生活資訊站</div>
+        <ul class="nav-links">
+            <li><a href="index.html">回到主頁</a></li>
+            <li><a href="awards.html" class="active">國家企業環保獎</a></li>
+        </ul>
+    </nav>
+
+    <main id="facilities-content">
+        <section class="page-header-compact">
+            <div class="header-left">
+                <label for="city-dropdown">查詢縣市：</label>
+                <select id="city-dropdown">
+                    <option value="all">全台總數概覽</option>
+                    <option disabled>─── 直轄市 ───</option>
+                    <option value="taipei">臺北市</option>
+                    <option value="new-taipei">新北市</option>
+                    <option value="taoyuan">桃園市</option>
+                    <option value="taichung">臺中市</option>
+                    <option value="tainan">臺南市</option>
+                    <option value="kaohsiung">高雄市</option>
+                    <option disabled>─── 其他縣市 ───</option>
+                    <option value="keelung">基隆市</option>
+                    <option value="hsinchu-city">新竹市</option>
+                    <option value="hsinchu-county">新竹縣</option>
+                    <option value="miaoli">苗栗縣</option>
+                    <option value="changhua">彰化縣</option>
+                    <option value="nantou">南投縣</option>
+                    <option value="yunlin">雲林縣</option>
+                    <option value="chiayi-city">嘉義市</option>
+                    <option value="chiayi-county">嘉義縣</option>
+                    <option value="pingtung">屏東縣</option>
+                    <option value="yilan">宜蘭縣</option>
+                    <option value="hualien">花蓮縣</option>
+                    <option value="taitung">臺東縣</option>
+                    <option value="penghu">澎湖縣</option>
+                    <option value="kinmen">金門縣</option>
+                    <option value="lienchiang">連江縣</option>
+                </select>
+            </div>
+
+            <h1 class="header-center">國家企業環保獎榮譽榜</h1>
+
+            <div class="header-right">
+                <span id="update-date" class="update-date-inline">更新：讀取中...</span>
+            </div>
+        </section>
+
+        <section id="overview-view">
+            <div class="table-responsive-wrapper">
+                <!-- 💡 使用 flex 排版：左邊空白佔位，中間標題，右邊選單 -->
+                <div class="detail-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="flex: 1;"></div> <!-- 左側空白佔位區 -->
+
+                    <div class="header-main-info" style="display: flex; justify-content: center; align-items: center; gap: 15px; flex: 2;">
+                        <h2 id="overview-title" style="margin: 0;">全台第 X 屆得獎排名</h2>
+                        <span id="total-stats" class="stats-text">統計中...</span>
+                    </div>
+
+                    <div class="header-action-area" style="display: flex; justify-content: flex-end; align-items: center; flex: 1;">
+                        <label for="overview-edition-dropdown" style="font-weight: bold; color: var(--text-muted); margin-right: 8px;">屆別：</label>
+                        <select id="overview-edition-dropdown" style="padding: 5px 10px; border-radius: 4px; border: 1px solid var(--border-color); cursor: pointer; font-size: 0.95rem;">
+                            <!-- JS 會自動填入屆別 -->
+                        </select>
+                    </div>
+                </div>
+
+                <table id="facilities-table" class="ranking-table">
+                    <thead>
+                        <tr>
+                            <th>排名</th>
+                            <th>縣市別</th>
+                            <th>獲獎總數</th>
+                            <th>該屆佔比</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ranking-table-body">
+                        </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="history-view" style="display: none;">
+            <div class="table-responsive-wrapper">
+                <!-- 💡 標題置中，按鈕靠右 -->
+                <div class="detail-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="flex: 1;"></div> <!-- 佔位 -->
+
+                    <div class="header-main-info" style="display: flex; justify-content: center; align-items: center; gap: 15px; flex: 2;">
+                        <h2 id="current-city-title" style="margin: 0;">縣市歷屆戰績</h2>
+                        <span id="city-stats" class="stats-text"></span>
+                    </div>
+
+                    <div class="header-action-area" style="display: flex; justify-content: flex-end; flex: 1;">
+                        <button id="btn-back-overview" style="background: none; border: none; cursor: pointer; font-size: 1.5rem;" title="返回全台總覽">🔙</button>
+                    </div>
+                </div>
+
+                <table id="facilities-table" class="ranking-table">
+                    <thead>
+                        <tr>
+                            <th>屆別 (點擊看名單)</th>
+                            <th>該屆得獎總數</th>
+                            <th>獎項概況</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-table-body">
+                        </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="detail-view" style="display: none;">
+            <div class="table-responsive-wrapper">
+                <div class="detail-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="flex: 1;"></div>
+                    <div class="header-main-info" style="display: flex; justify-content: center; align-items: center; gap: 15px; flex: 2;">
+                        <h2 id="detail-title">獲獎企業明細</h2>
+                        <span id="detail-stats" class="stats-text"></span>
+                    </div>
+                    <div class="header-action-area" style="display: flex; justify-content: flex-end; flex: 1;">
+                        <button id="btn-back-history" style="background: none; border: none; cursor: pointer; font-size: 1.5rem;" title="返回歷屆戰績">🔙</button>
+                    </div>
+                </div>
+
+                <table id="facilities-table" class="ranking-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 70%;">獲獎單位</th>
+                            <th style="width: 30%;">獲得獎項</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detail-table-body">
+                        </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/global_script.js"></script>
+    <script src="js/awards_script.js"></script>
+    <footer class="site-footer source-footer">
+        <a href="https://aeepa.moenv.gov.tw/Nation_history_deeds.aspx#gsc.tab=0" target="_blank" rel="noopener noreferrer">
+            資料來源：環境部國家企業環保獎 - 獲獎名單
+        </a>
+    </footer>
+</body>
+
+</html>

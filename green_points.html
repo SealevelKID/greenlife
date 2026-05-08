@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>臺灣綠生活資訊站 - 全國環保集點</title>
+    <!-- 沿用現有的 CSS 架構 -->
+    <link rel="stylesheet" href="css/global_style.css">
+    <link rel="stylesheet" href="css/facilities_style.css">
+</head>
+
+<body>
+
+    <nav id="global-navbar">
+        <div class="logo">臺灣綠生活資訊站</div>
+        <ul class="nav-links">
+            <li><a href="index.html">回到主頁</a></li>
+            <li><a href="green_points.html" class="active">全國環保集點</a></li>
+        </ul>
+    </nav>
+
+    <main id="facilities-content">
+        <!-- 1. 緊湊型頂部控制列 (完美對齊設施頁面結構) -->
+        <section class="page-header-compact">
+            <div class="header-left">
+                <label for="city-dropdown">查詢縣市：</label>
+                <select id="city-dropdown">
+                    <option value="all">全台總數概覽</option>
+                    <option disabled>─── 直轄市 ───</option>
+                    <option value="臺北市">臺北市</option>
+                    <option value="新北市">新北市</option>
+                    <option value="桃園市">桃園市</option>
+                    <option value="臺中市">臺中市</option>
+                    <option value="臺南市">臺南市</option>
+                    <option value="高雄市">高雄市</option>
+                    <option disabled>─── 其他縣市 ───</option>
+                    <option value="基隆市">基隆市</option>
+                    <option value="新竹市">新竹市</option>
+                    <option value="新竹縣">新竹縣</option>
+                    <option value="苗栗縣">苗栗縣</option>
+                    <option value="彰化縣">彰化縣</option>
+                    <option value="南投縣">南投縣</option>
+                    <option value="雲林縣">雲林縣</option>
+                    <option value="嘉義市">嘉義市</option>
+                    <option value="嘉義縣">嘉義縣</option>
+                    <option value="屏東縣">屏東縣</option>
+                    <option value="宜蘭縣">宜蘭縣</option>
+                    <option value="花蓮縣">花蓮縣</option>
+                    <option value="臺東縣">臺東縣</option>
+                    <option value="澎湖縣">澎湖縣</option>
+                    <option value="金門縣">金門縣</option>
+                    <option value="連江縣">連江縣</option>
+                </select>
+            </div>
+
+            <h1 class="header-center">全國環保集點查詢</h1>
+
+            <div class="header-right">
+                <span id="update-date" class="update-date-inline">更新：讀取中...</span>
+            </div>
+        </section>
+
+        <!-- 3. 階段一：各縣市數量排名總覽 (預設顯示) -->
+        <section id="overview-view">
+            <div class="table-responsive-wrapper">
+                <div class="detail-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb; padding-bottom: 10px; margin-bottom: 15px;">
+                    
+                    <!-- 1. 左側：空白佔位 (佔 1 份空間) -->
+                    <div style="flex: 1;"></div>
+
+                    <!-- 2. 中央：標題與統計數字 (佔 2 份空間，並設定置中) -->
+                    <div class="header-main-info" style="display: flex; justify-content: center; align-items: center; gap: 15px; flex: 2;">
+                        <h2 id="ranking-title" style="margin: 0; font-size: 1.5rem; color: #374151;">各縣市特約機構排名</h2>
+                        <span id="total-stats" class="stats-text" style="background-color: #e8f5e9; color: #2e7d32; padding: 4px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: bold;">統計中...</span>
+                    </div>
+
+                    <!-- 3. 右側：排序選單 (佔 1 份空間，並設定靠右對齊) -->
+                    <div class="header-action-area" style="display: flex; justify-content: flex-end; align-items: center; gap: 10px; font-size: 0.95rem; color: #4b5563; flex: 1;">
+                        <label for="sort-dropdown" style="margin: 0; font-weight: bold;">排序方式：</label>
+                        <select id="sort-dropdown" style="padding: 5px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.95rem; cursor: pointer; background-color: white;">
+                            <option value="count">特約機構家數</option>
+                            <option value="new_f">新增有效會員</option>
+                            <option value="reg_b">累積註冊數</option>
+                        </select>
+                    </div>
+
+                </div>
+                <!-- 新增：融合進表格的全國看板 -->
+                <div id="overview-dashboard" style="padding: 20px 10px; border-bottom: 1px solid #f0f0f0;"></div>
+                <!-- 套用 .ranking-table，CSS 會自動將其縮小至 60% 並置中 -->
+                <table id="facilities-table" class="ranking-table">
+                    <thead>
+                        <tr>
+                            <th>排名</th>
+                            <th>縣市別</th>
+                            <th>特約機構家數</th>
+                            <th>佔比</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ranking-table-body">
+                        <!-- JS 動態產生排名 -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 4. 階段二：商家詳細資料區塊 (預設隱藏) -->
+        <section id="detail-view" style="display: none;">
+            <div class="table-responsive-wrapper">
+                <!-- 標題與統計區塊：設定 relative 讓子元素可以絕對定位在右側 -->
+                <div class="detail-header" style="position: relative; display: flex; justify-content: center; align-items: center; width: 100%; padding: 1.5rem;">
+                    
+                    <!-- 左側：標題與統計區塊 (因為父層設定了 center，這裡會完美置中) -->
+                    <div class="header-main-info" style="display: flex; align-items: center; gap: 15px;">
+                        <h2 id="current-city-title" style="margin: 0;">縣市詳細資料</h2>
+                        <span id="city-stats" class="stats-text"></span>
+                    </div>
+
+                    <!-- 右側：操作區塊 (設定絕對定位 right: 20px，才不會把置中的標題擠歪) -->
+                    <div class="header-action-area" style="position: absolute; right: 20px; display: flex; align-items: center;">
+                        <button id="btn-back-overview" style="background: none; border: none; cursor: pointer; font-size: 1.5rem; padding: 0;" title="返回全台總覽">
+                            🔙
+                        </button>
+                    </div>
+                    
+                </div>
+                <!-- 新增：融合進表格的縣市專屬看板 -->
+                <div id="detail-dashboard" style="padding: 20px 10px; border-bottom: 1px solid #f0f0f0;"></div>
+                <!-- 商家直式清單與分頁容器 -->
+                <div id="merchant-list-container" style="padding: 20px;">
+                    <!-- JS 動態產生商家列表與分頁按鈕 -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 引入共用邏輯與本頁專屬邏輯 -->
+    <script src="js/global_script.js"></script>
+    <script src="js/green_points_script.js"></script>
+    <footer class="site-footer source-footer">
+        <a href="https://docs.google.com/spreadsheets/d/1Na6IfnxL-Za7EBtOOTvVUapmubFA3R5OmKZKcpxvgY0/edit?gid=2016489962#gid=2016489962" target="_blank" rel="noopener noreferrer">
+            資料來源：【環保集點】縣市活動/特約機構合作
+        </a>
+    </footer>
+</body>
+
+</html>

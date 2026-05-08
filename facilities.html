@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>臺灣綠生活資訊站 - 環境教育設施</title>
+
+    <link rel="stylesheet" href="css/global_style.css">
+    <link rel="stylesheet" href="css/facilities_style.css">
+</head>
+
+<body>
+
+    <nav id="global-navbar">
+        <div class="logo">臺灣綠生活資訊站</div>
+        <ul class="nav-links">
+            <li><a href="index.html">回到主頁</a></li>
+            <li><a href="facilities.html" class="active">環境教育設施場所</a></li>
+        </ul>
+    </nav>
+
+    <main id="facilities-content">
+        <!-- 1. 將標題與日期放在同一個區塊，方便後續用 CSS 讓它們同行 -->
+        <section class="page-header-compact">
+            <div class="header-left">
+                <label for="city-dropdown">查詢縣市：</label>
+                <select id="city-dropdown">
+                    <option value="all">全台總數概覽</option>
+                    <option disabled>─── 直轄市 ───</option>
+                    <option value="taipei">臺北市</option>
+                    <option value="new-taipei">新北市</option>
+                    <option value="taoyuan">桃園市</option>
+                    <option value="taichung">臺中市</option>
+                    <option value="tainan">臺南市</option>
+                    <option value="kaohsiung">高雄市</option>
+                    <option disabled>─── 其他縣市 ───</option>
+                    <option value="keelung">基隆市</option>
+                    <option value="hsinchu-city">新竹市</option>
+                    <option value="hsinchu-county">新竹縣</option>
+                    <option value="miaoli">苗栗縣</option>
+                    <option value="changhua">彰化縣</option>
+                    <option value="nantou">南投縣</option>
+                    <option value="yunlin">雲林縣</option>
+                    <option value="chiayi-city">嘉義市</option>
+                    <option value="chiayi-county">嘉義縣</option>
+                    <option value="pingtung">屏東縣</option>
+                    <option value="yilan">宜蘭縣</option>
+                    <option value="hualien">花蓮縣</option>
+                    <option value="taitung">臺東縣</option>
+                    <option value="penghu">澎湖縣</option>
+                    <option value="kinmen">金門縣</option>
+                    <option value="lienchiang">連江縣</option>
+                </select>
+            </div>
+
+            <h1 class="header-center">環境教育設施場所查詢</h1>
+
+            <div class="header-right">
+                <span id="update-date" class="update-date-inline">更新：讀取中...</span>
+            </div>
+        </section>
+
+        <!-- 階段一：各縣市數量排名總覽 (預設顯示) -->
+        <section id="overview-view">
+            <div class="table-responsive-wrapper">
+                <!-- 確保外層也置中 -->
+                <div class="detail-header" style="justify-content: center;">
+                    <!-- 將 space-between 改為 center，並加上 gap: 15px 產生漂亮間距 -->
+                    <div class="header-main-info" style="display: flex; justify-content: center; align-items: center; gap: 15px; width: 100%;">
+                        <!-- 加上 margin: 0 避免預設邊距讓上下不對齊 -->
+                        <h2 style="margin: 0;">各縣市設施數量排名</h2>
+                        <span id="total-stats" class="stats-text">統計中...</span>
+                    </div>
+                </div>
+                <table id="facilities-table" class="ranking-table">
+                    <thead>
+                        <tr>
+                            <th>排名</th>
+                            <th>縣市別</th>
+                            <th>設施數量</th>
+                            <th>全國佔比</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ranking-table-body">
+                        <!-- JS 動態產生排名 -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 修正後的詳細資料區塊 -->
+        <section id="detail-view" style="display: none;">
+            <div class="table-responsive-wrapper">
+                <!-- 標題與統計區塊 -->
+                <div class="detail-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    
+                    <!-- 左側：標題與統計區塊 -->
+                    <div class="header-main-info" style="display: flex; align-items: center; gap: 15px;">
+                        <h2 id="current-city-title" style="margin: 0;">縣市詳細資料</h2>
+                        <span id="city-stats" class="stats-text"></span>
+                    </div>
+
+                    <!-- 右側：操作與狀態區塊 -->
+                    <div class="header-action-area" style="display: flex; align-items: center; gap: 10px;">
+                        <div id="status-summary" class="status-summary-compact"></div>
+
+                        <label for="status-filter" style="margin: 0; white-space: nowrap;">狀態：</label>
+                        <select id="status-filter" style="padding: 5px;">
+                            <option value="all">顯示全部</option>
+                            <option value="warning">需評估展延</option>
+                            <option value="expired">已過期</option>
+                        </select>
+                        
+                        <button id="btn-back-overview" style="background: none; border: none; cursor: pointer; font-size: 1.5rem; padding: 0; margin-left: 10px;" title="返回全台總覽">
+                            🔙
+                        </button>
+                    </div>
+                    
+                </div>
+
+                <!-- 資料表格 -->
+                <table id="facilities-table">
+                    <thead>
+                        <tr>
+                            <th>核准時間</th>
+                            <th>場所類型</th>
+                            <th>設施場所名稱</th>
+                            <th>申請單位全銜</th>
+                            <th>證書狀態</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/global_script.js"></script>
+    <script src="js/facilities_script.js"></script>
+    <footer class="site-footer source-footer">
+        <a href="https://neecs.moenv.gov.tw/Home/PlaceQry" target="_blank" rel="noopener noreferrer"
+        target="_blank" rel="noopener noreferrer">
+            資料來源：環境教育設施場所查詢 - 環境教育認證系統
+        </a>
+    </footer>
+</body>
+
+</html>

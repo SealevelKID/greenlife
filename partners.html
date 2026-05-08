@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>臺灣綠生活資訊站 - 綠色夥伴</title>
+
+    <!-- 完美沿用既有的樣式表 -->
+    <link rel="stylesheet" href="css/global_style.css">
+    <link rel="stylesheet" href="css/facilities_style.css">
+</head>
+
+<body>
+
+    <nav id="global-navbar">
+        <div class="logo">臺灣綠生活資訊站</div>
+        <ul class="nav-links">
+            <li><a href="index.html">回到主頁</a></li>
+            <li><a href="partners.html" class="active">綠色夥伴</a></li>
+        </ul>
+    </nav>
+
+    <main id="facilities-content">
+        <!-- 緊湊型頂部控制列 -->
+        <section class="page-header-compact">
+            <div class="header-left">
+                <label for="city-dropdown">查詢縣市：</label>
+                <select id="city-dropdown">
+                    <option value="all">全台總數概覽</option>
+                    <option disabled>─── 直轄市 ───</option>
+                    <option value="taipei">臺北市</option>
+                    <option value="new-taipei">新北市</option>
+                    <option value="taoyuan">桃園市</option>
+                    <option value="taichung">臺中市</option>
+                    <option value="tainan">臺南市</option>
+                    <option value="kaohsiung">高雄市</option>
+                    <option disabled>─── 其他縣市 ───</option>
+                    <option value="keelung">基隆市</option>
+                    <option value="hsinchu-city">新竹市</option>
+                    <option value="hsinchu-county">新竹縣</option>
+                    <option value="miaoli">苗栗縣</option>
+                    <option value="changhua">彰化縣</option>
+                    <option value="nantou">南投縣</option>
+                    <option value="yunlin">雲林縣</option>
+                    <option value="chiayi-city">嘉義市</option>
+                    <option value="chiayi-county">嘉義縣</option>
+                    <option value="pingtung">屏東縣</option>
+                    <option value="yilan">宜蘭縣</option>
+                    <option value="hualien">花蓮縣</option>
+                    <option value="taitung">臺東縣</option>
+                    <option value="penghu">澎湖縣</option>
+                    <option value="kinmen">金門縣</option>
+                    <option value="lienchiang">連江縣</option>
+                </select>
+            </div>
+
+            <h1 class="header-center">綠色夥伴響應統計</h1>
+
+            <div class="header-right">
+                <span id="update-date" class="update-date-inline">更新：讀取中...</span>
+            </div>
+        </section>
+
+        <!-- 階段一：(全台) 縣市排名總覽 -->
+        <section id="overview-view">
+            <div class="table-responsive-wrapper">
+                <!-- 【新增】將標題列分為三等份，確保標題絕對置中，選單靠右 -->
+                <div class="detail-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="flex: 1;"></div> <!-- 左側空白佔位區 -->
+
+                    <div class="header-main-info"
+                        style="display: flex; justify-content: center; align-items: center; gap: 15px; flex: 2;">
+                        <h2 id="overview-title" style="margin: 0;">各縣市綠色夥伴排名</h2>
+                        <span id="total-stats" class="stats-text">統計中...</span>
+                    </div>
+
+                    <div class="header-action-area"
+                        style="display: flex; justify-content: flex-end; align-items: center; flex: 1;">
+                        <label for="overview-year-dropdown"
+                            style="font-weight: bold; color: var(--text-muted); margin-right: 8px;">年度：</label>
+                        <select id="overview-year-dropdown"
+                            style="padding: 5px 10px; border-radius: 4px; border: 1px solid var(--border-color); cursor: pointer; font-size: 0.95rem;">
+                            <option value="all">歷年累計</option>
+                            <!-- JS 會自動填入年份 -->
+                        </select>
+                    </div>
+                </div>
+
+                <table id="facilities-table" class="ranking-table">
+                    <thead>
+                        <tr>
+                            <th>排名</th>
+                            <th>縣市別</th>
+                            <th>響應總數</th>
+                            <th>全國佔比</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ranking-table-body">
+                        <!-- JS 動態產生排名 -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 階段二：(單縣市) 歷年單位明細 -->
+        <section id="detail-view" style="display: none;">
+            <div class="table-responsive-wrapper">
+                <div class="detail-header" style="justify-content: center;">
+                    <div class="header-main-info"
+                        style="display: flex; justify-content: center; align-items: center; gap: 15px; width: auto;">
+                        <h2 id="current-city-title" style="margin: 0;">縣市詳細資料</h2>
+                        <span id="city-stats" class="stats-text"></span>
+                    </div>
+
+                    <div class="header-action-area" style="display: flex; align-items: center; gap: 10px;">
+                        <!-- 返回按鈕 -->
+                        <button id="btn-back-overview"
+                            style="background: none; border: none; cursor: pointer; font-size: 1.5rem; padding: 0; margin-left: 10px;"
+                            title="返回全台總覽">
+                            🔙
+                        </button>
+                    </div>
+                </div>
+
+                <table id="facilities-table" class="ranking-table">
+                    <thead>
+                        <tr>
+                            <th>年度 (點擊看圖表)</th>
+                            <th>該年度響應數量</th>
+                            <!-- 【修復】把遺失的年度增額欄位加回來 -->
+                            <th>年度增額</th>
+                            <th>單位性質明細</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- JS 動態產生各單位的數量 -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- 圓餅圖彈出視窗 (Modal) -->
+    <div id="chart-modal-overlay" class="modal-overlay"
+        style="display: none; align-items: center; justify-content: center;">
+
+        <!-- 【關鍵修改】移除 overflow-y 和 max-height，並將 padding 加大到 30px 讓白邊更舒服 -->
+        <div class="modal-content chart-modal-content"
+            style="max-width: 600px; width: 90%; padding: 30px; box-sizing: border-box;">
+
+            <!-- 【微調】稍微加大標題下方的留白 (margin-bottom: 20px) -->
+            <div class="modal-header"
+                style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px;">
+                <span id="modal-year-title"
+                    style="color: var(--text-main); font-size: 1.3rem; font-weight: bold;">響應佔比</span>
+
+                <!-- 【修改】將關閉按鈕與下載按鈕包在一起 -->
+                <div id="modal-action-btns" style="display: flex; gap: 15px; align-items: center;">
+                    <button id="btn-download-chart"
+                        style="background-color: var(--primary-color); color: white; border: none; padding: 5px 12px; border-radius: 4px; font-size: 0.9rem; cursor: pointer;">
+                        💾 下載圖表
+                    </button>
+                    <button id="close-modal-btn"
+                        style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #888;">✖</button>
+                </div>
+            </div>
+
+            <div class="modal-body"
+                style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: center;">
+                <!-- 左側：圓餅圖容器 -->
+                <div style="flex: 1; min-width: 200px; height: 240px; position: relative;">
+                    <canvas id="pieChart"></canvas>
+                </div>
+
+                <!-- 右側：數據小表格 -->
+                <div style="flex: 1; min-width: 220px;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.95rem; margin: 0;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid #ccc;">
+                                <th style="padding: 6px 5px; text-align: left; color: #555; white-space: nowrap;">單位性質
+                                </th>
+                                <th style="padding: 6px 5px; text-align: right; color: #555; white-space: nowrap;">數量
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="modal-table-body">
+                            <!-- JS 動態產生 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 引入 Chart.js 圖表套件 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- 引入 html2canvas 截圖套件 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="js/global_script.js"></script>
+    <script src="js/partners_script.js"></script>
+    <footer class="site-footer source-footer">
+        <a href="https://greenlifestyle.moenv.gov.tw/categories/green_office/participate?page=1&type=&city=&year=NaN&month=0&sort=10&n="
+            target="_blank" rel="noopener noreferrer">
+            資料來源：淨零綠生活資訊平台 - 綠色夥伴響應名單
+        </a>
+    </footer>
+</body>
+
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>臺灣綠生活資訊站 - 綠色商店</title>
+
+    <link rel="stylesheet" href="css/global_style.css">
+    <link rel="stylesheet" href="css/facilities_style.css">
+
+    <!-- 引入 SheetJS 處理 ODS/Excel 檔案 -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+</head>
+<!-- 自訂彈出視窗 (Modal) -->
+<div id="custom-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header" id="modal-title">提示</div>
+        <div class="modal-body" id="modal-message">訊息內容</div>
+        <button id="modal-close-btn" class="modal-btn">我知道了</button>
+    </div>
+</div>
+
+<body>
+
+    <nav id="global-navbar">
+        <div class="logo">臺灣綠生活資訊站</div>
+        <ul class="nav-links">
+            <li><a href="index.html">回到主頁</a></li>
+            <li><a href="stores.html" class="active">綠色商店</a></li>
+        </ul>
+    </nav>
+
+    <main id="facilities-content">
+        <!-- 更新後的頂部區塊 -->
+        <section class="page-header-compact"
+            style="display: flex; justify-content: space-between; align-items: center;">
+
+            <!-- 1. 左側：上傳檔案按鈕 (取代原本的空白 div) -->
+            <div style="flex: 1; text-align: left;">
+                <!-- 隱藏原生的檔案輸入框 -->
+                <input type="file" id="file-upload" accept=".ods, .xlsx, .xls" style="display: none;">
+                <!-- 使用者點擊的自訂按鈕 -->
+                <button id="trigger-upload"
+                    style="padding: 8px 20px; background-color: #059669; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">
+                    上傳檔案
+                </button>
+            </div>
+
+            <h1 class="header-center" style="flex: 2; text-align: center; margin: 0;">綠色商店統計總覽</h1>
+
+            <!-- 3. 右側：狀態與更新時間 -->
+            <div class="header-right" style="flex: 1; text-align: right;">
+                <span id="update-date" class="update-date-inline">等待上傳資料...</span>
+                <div id="upload-status" style="margin-top: 5px; color: #4b5563; font-size: 14px;"></div>
+            </div>
+        </section>
+        <!-- 新增：初始狀態提示區塊 (未上傳檔案時顯示) -->
+        <section id="initial-prompt"
+            style="text-align: center; padding: 60px 20px; color: #6b7280; background-color: #f9fafb; border-radius: 8px; margin: 20px auto; border: 2px dashed #d1d5db; max-width: 800px;">
+            <div style="font-size: 3rem; margin-bottom: 10px;">📥</div>
+            <h2 style="margin: 0 0 10px 0; color: #374151; font-size: 1.5rem;">歡迎使用綠色商店查詢系統</h2>
+            <p style="margin: 0 0 15px 0; font-size: 1rem;">網頁目前尚無資料。<br>請先至「淨零綠生活資訊平台」下載最新 ODS 檔，再點擊左上方按鈕上傳。</p>
+            <a href="https://greenlifestyle.moenv.gov.tw/categories/GreenShopSearch" target="_blank"
+                style="display: inline-block; padding: 8px 16px; background-color: #e5e7eb; color: #4b5563; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                前往官網下載名單
+            </a>
+        </section>
+        <!-- 排名總覽 -->
+        <section id="overview-view" style="display: none;">
+            <div class="table-responsive-wrapper">
+                <div class="detail-header">
+                    <div class="header-main-info"
+                        style="display: flex; justify-content: center; align-items: center; gap: 15px; width: 100%;">
+                        <h2 style="margin: 0;">各縣市店家數量排名</h2>
+                        <span id="total-stats" class="stats-text"></span>
+                    </div>
+                </div>
+                <table id="facilities-table" class="ranking-table">
+                    <thead>
+                        <tr>
+                            <th>排名</th>
+                            <th>縣市別</th>
+                            <th>店家數量</th>
+                            <th>全國佔比</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ranking-table-body">
+                        <!-- JS 動態產生排名 -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="js/global_script.js"></script>
+    <script src="js/stores_script.js"></script>
+    <footer class="site-footer source-footer">
+        <a href="https://greenlifestyle.moenv.gov.tw/categories/GreenShopSearch" target="_blank"
+            rel="noopener noreferrer">
+            資料來源：淨零綠生活資訊平台 - 綠色商店查詢
+        </a>
+    </footer>
+</body>
+
+</html>
