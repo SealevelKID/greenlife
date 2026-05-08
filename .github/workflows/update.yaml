@@ -37,9 +37,10 @@ jobs:
           pip install -r requirements.txt
 
       - name: 5. 執行爬蟲程式群組
-        # 將 GitHub Secrets 中的金鑰載入環境變數，供給 scraper.py 使用
+        # 將 GitHub Secrets 中的金鑰載入環境變數
         env:
-          MOENV_API_KEY: ${{ secrets.MOENV_API_KEY }}
+          MOENV_API_KEY: ${{ secrets.MOENV_API_KEY }} # 這是你原本設施爬蟲在用的
+          GREEN_PARTNER_API_KEY: ${{ secrets.GREEN_PARTNER_API_KEY }} # 🌟 新增這一行
         run: |
           # 確保 data 資料夾存在
           mkdir -p data
