@@ -1,0 +1,90 @@
+name: 臺灣綠生活資訊站-全站自動更新
+
+on:
+  schedule:
+    - cron: '0 16 * * 0'
+  
+  repository_dispatch:
+    types: [start_crawler]
+
+  workflow_dispatch:
+
+# 🌟 補上這段權限設定，機器人才能存檔
+permissions:
+  contents: write
+
+jobs:
+  update-all-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. 取得專案原始碼
+        uses: actions/checkout@v3
+
+      - name: 2. 設定 Python 環境
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: 3. 安裝 Chrome 瀏覽器
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+
+      - name: 4. 安裝 Python 依賴套件
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 5. 執行爬蟲程式群組
+        # 將 GitHub Secrets 中的金鑰載入環境變數，供給 scraper.py 使用
+        env:
+          MOENV_API_KEY: ${{ secrets.MOENV_API_KEY }}
+        run: |
+          # 確保 data 資料夾存在
+          mkdir -p data
+          
+          echo "==== 1. 執行環境教育設施 ===="
+          python scraper.py
+          
+          echo "==== 2. 執行綠色夥伴 ===="
+          python scraper_partners.py
+          
+          echo "==== 3. 執行國家企業環保獎 ===="
+          python scraper_awards.py
+          
+          echo "==== 4. 執行環保集點 ===="
+          python scraper_green_points.py
+          
+          echo "==== 5. 執行環保旅宿 ===="
+          # 注意：此腳本需要 GitHub 儲存庫內存在最新的 .ods 檔案
+          python fetch_dates.py
+
+      - name: 6. 自動將更新後的檔案存回 GitHub
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "🤖 機器人：自動更新全站爬蟲資料"
+          file_pattern: "環保旅宿_Selenium結果.xlsx data/*.json"
+
+      # ==========================================
+      # 🆕 修改：7. 傳送 Telegram 執行結果通知
+      # ==========================================
+      - name: 7a. 傳送 Telegram 通知 (成功)
+        if: success()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          curl -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \
+          -d chat_id=${TELEGRAM_CHAT_ID} \
+          -d text="✅ 綠生活資訊站：更新成功！%0A執行編號：#${{ github.run_number }}%0A查看詳情：${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+      - name: 7b. 傳送 Telegram 通知 (失敗)
+        if: failure()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          curl -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \
+          -d chat_id=${TELEGRAM_CHAT_ID} \
+          -d text="❌ 綠生活資訊站：更新失敗！%0A錯誤發生於：#${{ github.run_number }}%0A查看日誌：${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
