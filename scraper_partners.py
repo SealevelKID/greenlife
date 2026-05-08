@@ -47,14 +47,19 @@ def scrape_and_aggregate_partners():
         data = json.dumps(payload).encode('utf-8')
         current_ua = random.choice(USER_AGENTS)
         
+        # 🌟 新增：從系統環境讀取金鑰，並加上防呆機制
+        api_key = os.getenv("GREEN_PARTNER_API_KEY")
+        if not api_key:
+            print("❌ 找不到 GREEN_PARTNER_API_KEY，請確認 GitHub Secrets 是否已設定！")
+            break # 如果沒金鑰就直接結束迴圈，避免浪費資源發送無效請求
+
         headers = {
             'User-Agent': current_ua,
             'Content-Type': 'application/json; charset=utf-8',
             'Accept': '*/*',
             'Origin': 'https://greenlifestyle.moenv.gov.tw',
             'Referer': f'https://greenlifestyle.moenv.gov.tw/categories/green_office/participate?page={page}',
-            # 從環境變數讀取 MOENV_API_KEY，若讀不到則保留為 None 或空字串
-            'x-api-key': os.getenv('MOENV_API_KEY')
+            'x-api-key': api_key  # 🌟 替換這裡：改用變數傳遞
         }
         
         # === 局部修改：加入重試迴圈 ===
