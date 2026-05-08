@@ -1,0 +1,23 @@
+name: Telegram 發送功能測試
+
+on:
+  # 允許手動點擊按鈕觸發測試
+  workflow_dispatch:
+
+jobs:
+  test-connection:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 測試發送訊息
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          # 使用 -v (verbose) 可以看到詳細的連線資訊
+          # 使用 --data-urlencode 確保特殊字元不會出錯
+          curl -v -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d chat_id="${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=🔔 測試通知：GitHub Actions 發送功能測試中。
+          
+          專案：${{ github.repository }}
+          時間：$(date +'%Y-%m-%d %H:%M:%S')"
