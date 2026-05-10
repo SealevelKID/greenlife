@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // === 2. 禁止滑鼠右鍵與快捷鍵設定 ===
     document.addEventListener('contextmenu', (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
     });
 
     document.addEventListener('keydown', (e) => {
@@ -70,7 +70,7 @@ function initTableDownload() {
         downloadBtn.style.cursor = 'pointer';
         downloadBtn.style.marginLeft = '10px';
         downloadBtn.style.fontSize = '1.1em';
-        downloadBtn.title = '點擊下載表格資料'; 
+        downloadBtn.title = '點擊下載表格資料';
 
         lastCell.appendChild(downloadBtn);
 
@@ -109,14 +109,63 @@ function initTableDownload() {
 
             tableTitle = tableTitle.replace(/[\\/:*?"<>|\n\r]/g, '');
 
-            // 動態抓取「年份」下拉選單的值
+            // ==========================================
+            // 【修正版】優先抓取彈出視窗 (Modal) 的標題作為檔名
+            // ==========================================
+            const modalTitleEl = document.getElementById('modal-year-title');
+            
+            // 檢查視窗標題是否存在，且確認現在視窗是打開的 (display != none)
+            const isModalOpen = modalTitleEl && window.getComputedStyle(modalTitleEl.closest('#chart-modal-overlay') || {}).display !== 'none';
+
+            if (isModalOpen && modalTitleEl.innerText.trim() !== "") {
+                let modalText = modalTitleEl.innerText.trim();
+                
+                // 1. 去除括號及其中的統計文字
+                modalText = modalText.split(' (')[0].trim();
+                
+                // 2. 將空格轉換為底線
+                const formattedTitle = modalText.replace(/\s+/g, '_');
+                
+                // 3. 組合最終檔名 (直接把乾淨的標題交給它，不自己加前綴)
+                tableTitle = formattedTitle;
+            } // 🌟 新增：要在這裡就把 if 關起來！
+
+            // 動態抓取「年份」與「縣市」下拉選單的值
             const selects = document.querySelectorAll('select');
             selects.forEach(select => {
                 const option = select.options[select.selectedIndex];
                 if (option) {
                     const optionText = option.innerText.trim();
-                    if (optionText.includes('年') || /^\d{4}$/.test(optionText)) {
-                        tableTitle += `_${optionText}`;
+                    
+                    // 1. 處理年份：判斷是否為年份選項 (包含 '年' 或是 4位數字，且排除 '歷年' 本身)
+                    if ((optionText.includes('年') || /^\d{4}$/.test(optionText)) && !optionText.includes('歷年')) {
+                        // 確保格式是 "2022年" (把空白拿掉)
+                        const yearStr = optionText.includes('年') ? optionText.replace(/\s+/g, '') : `${optionText}年`;
+                        
+                        // 關鍵修改：針對各種可能的標題文字，精確插入年份
+                        if (tableTitle.includes('歷年累計響應統計')) {
+                            // 如果檔名是：...桃園市_歷年累計響應統計
+                            tableTitle = tableTitle.replace('歷年累計響應統計', `${yearStr}響應統計_歷年累計`);
+
+                        } else if (tableTitle.includes('綠色夥伴響應統計_歷年累計')) {
+                            // 如果檔名是：...高雄市_綠色夥伴響應統計_歷年累計
+                            tableTitle = tableTitle.replace('綠色夥伴響應統計_歷年累計', `${yearStr}響應統計_歷年累計`);
+                            
+                        } else if (tableTitle.includes('綠色夥伴響應統計')) {
+                            // 一般情況
+                            tableTitle = tableTitle.replace('綠色夥伴響應統計', `${yearStr}響應統計`);
+                            
+                        } else if (!tableTitle.includes(yearStr)) {
+                            // 防呆：如果上面的字眼都沒出現，至少把年份加在最後面
+                            tableTitle += `_${yearStr}`;
+                        }
+                    } 
+                    
+                    // 2. 處理縣市：維持你原有的邏輯不動
+                    else if (select.id === 'city-dropdown' && optionText !== '請選擇縣市' && option.value !== 'all') {
+                        if (!tableTitle.includes(optionText)) {
+                            tableTitle = `${optionText}_${tableTitle}`;
+                        }
                     }
                 }
             });
@@ -149,9 +198,9 @@ function initTableDownload() {
                         mediaElements.forEach(el => el.remove());
 
                         cloneCell.innerHTML = cloneCell.innerHTML
-                            .replace(/<br\s*[\/]?>/gi, ', ')                
-                            .replace(/<\/span>\s*<span/gi, '</span>, <span') 
-                            .replace(/<\/div>\s*<div/gi, '</div>, <div');    
+                            .replace(/<br\s*[\/]?>/gi, ', ')
+                            .replace(/<\/span>\s*<span/gi, '</span>, <span')
+                            .replace(/<\/div>\s*<div/gi, '</div>, <div');
 
                         let text = cloneCell.innerText;
                         text = text.replace(/[\r\n]+/g, ' ').replace(/\s{2,}/g, ' ').trim();
@@ -183,10 +232,10 @@ function initMobileModeToggle() {
     const toggleBtn = document.createElement('button');
     toggleBtn.id = 'mobile-mode-btn';
     toggleBtn.innerHTML = '📱 手機模式';
-    
+
     // 2. 讀取瀏覽器的「短期記憶」，檢查上次是不是開著手機模式
     const isMobileMode = localStorage.getItem('isMobileMode') === 'true';
-    
+
     // 如果上次是開著的，就在 <body> 貼上標籤，並改變按鈕外觀
     if (isMobileMode) {
         document.body.classList.add('mobile-mode');
@@ -197,10 +246,10 @@ function initMobileModeToggle() {
     toggleBtn.addEventListener('click', () => {
         // 切換 body 的 class (有就拿掉，沒有就加上)
         const currentMode = document.body.classList.toggle('mobile-mode');
-        
+
         // 切換按鈕本身的視覺樣式
         toggleBtn.classList.toggle('active');
-        
+
         // 將最新狀態寫入瀏覽器記憶中
         localStorage.setItem('isMobileMode', currentMode);
     });
