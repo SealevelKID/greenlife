@@ -86,21 +86,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
 
-            // 【新增】下載圖表截圖功能
+            // 【新增】下載圖表截圖功能 (終極防透明版)
             if (btnDownloadChart) {
                 btnDownloadChart.addEventListener('click', () => {
                     const modalContent = document.querySelector('.chart-modal-content');
                     const actionBtns = document.getElementById('modal-action-btns');
 
-                    // 截圖前先隱藏按鈕，避免按鈕被拍進去
+                    // 1. 截圖前：隱藏按鈕
                     if (actionBtns) actionBtns.style.display = 'none';
 
-                    // 執行截圖 (scale: 2 可以讓截圖解析度更高、文字更清晰)
-                    html2canvas(modalContent, { backgroundColor: '#ffffff', scale: 2 }).then(canvas => {
-                        if (actionBtns) actionBtns.style.display = 'flex'; // 恢復顯示按鈕
+                    // 2. 截圖前：暫存原本的樣式，並強制關閉動畫與設定純白底
+                    const originalAnimation = modalContent.style.animation;
+                    const originalBackground = modalContent.style.backgroundColor;
+                    
+                    // 拔掉動畫！這是解決半透明最關鍵的一步
+                    modalContent.style.animation = 'none'; 
+                    modalContent.style.backgroundColor = '#ffffff';
 
+                    // 3. 執行截圖
+                    html2canvas(modalContent, { 
+                        backgroundColor: '#ffffff',
+                        scale: 2 
+                    }).then(canvas => {
+                        
+                        // 4. 截圖後：恢復原本的按鈕與動畫樣式
+                        if (actionBtns) actionBtns.style.display = 'flex';
+                        modalContent.style.animation = originalAnimation;
+                        modalContent.style.backgroundColor = originalBackground;
+
+                        // 5. 觸發下載 (使用你原本設定好的標題與縣市年份)
                         const link = document.createElement('a');
-                        // 自動以標題命名檔案，例如：新北市_2026年_響應佔比.png
                         link.download = `${modalYearTitle.textContent.replace(/\s+/g, '_')}.png`;
                         link.href = canvas.toDataURL('image/png');
                         link.click();
@@ -365,6 +380,20 @@ document.addEventListener('DOMContentLoaded', () => {
         // ==========================================
         // 繪製圓餅圖
         // ==========================================
+        // ===== 新增第 1 部分：定義白色背景 Plugin (放在 if 判斷之前) =====
+        const customCanvasBackgroundColor = {
+            id: 'customCanvasBackgroundColor',
+            beforeDraw: (chart, args, options) => {
+                const {ctx} = chart;
+                ctx.save();
+                ctx.globalCompositeOperation = 'destination-over';
+                ctx.fillStyle = options.color || '#ffffff';
+                ctx.fillRect(0, 0, chart.width, chart.height);
+                ctx.restore();
+            }
+        };
+        // =========================================================
+
         if (myChart) {
             myChart.destroy();
         }
@@ -388,9 +417,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     legend: {
                         position: 'left', // 圖例放左側
                         labels: { font: { size: 14 } }
+                    },
+                    // ===== 新增第 2 部分：啟用背景顏色設定 =====
+                    customCanvasBackgroundColor: {
+                        color: 'white',
                     }
+                    // ==========================================
                 }
-            }
+            },
+            // ===== 新增第 3 部分：將 Plugin 註冊到這張圖表中 =====
+            plugins: [customCanvasBackgroundColor]
+            // ===================================================
         });
     }
 
