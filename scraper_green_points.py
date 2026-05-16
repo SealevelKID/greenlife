@@ -1,6 +1,7 @@
 import pandas as pd
 import json
 import os
+from datetime import datetime  # 🌟 新增這一行
 
 SHEET_ID = "1Na6IfnxL-Za7EBtOOTvVUapmubFA3R5OmKZKcpxvgY0"
 GID = "2016489962"
@@ -15,7 +16,21 @@ def fetch_and_process_data():
         # 【新增功能 1】先讀取最上面兩列，為了抓取 B1 的「更新日：2026/4/1」
         df_raw = pd.read_csv(CSV_URL, header=None, nrows=2, dtype=str)
         update_text = str(df_raw.iloc[0, 1]).strip() # 抓取 B1
-        update_date = update_text.replace("更新日：", "").strip() if "更新日" in update_text else "最新資料"
+        raw_date_str = update_text.replace("更新日：", "").strip() if "更新日" in update_text else "最新資料"
+
+        # 🌟 新增功能：統一日期格式
+        # 嘗試將官方的 "YYYY/M/D" 轉換成標準的 "YYYY-MM-DD"
+        update_date = raw_date_str
+        try:
+            # 如果字串看起來像日期（包含斜線）
+            if "/" in raw_date_str:
+                # 使用 datetime 解析，然後重新格式化，這樣能自動補齊個位數的 0
+                parsed_date = datetime.strptime(raw_date_str, "%Y/%m/%d")
+                update_date = parsed_date.strftime("%Y-%m-%d")
+        except ValueError:
+             # 如果解析失敗（例如官方突然寫了 "即時更新"），就維持原來的文字，避免程式當掉
+            print(f"⚠️ 無法解析日期格式：{raw_date_str}，將維持原始文字。")
+            update_date = raw_date_str
 
         # 正式讀取資料主體 (以第 2 列為標題)
         df = pd.read_csv(CSV_URL, header=1, dtype=str)
