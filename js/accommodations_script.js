@@ -82,23 +82,31 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         return false;
     }
-    // 🌟 新增：主動從伺服器抓取檔案的函式
+    // 🌟 修改：主動從伺服器抓取檔案的函式（加入最後修改時間偵測）
     async function autoLoadFromServer() {
-        // 這裡的路徑要對應你在 GitHub 上的檔名
         const filePath = './環保旅宿_Selenium結果.xlsx'; 
         
         try {
             const response = await fetch(filePath);
             if (!response.ok) throw new Error('伺服器上找不到檔案');
             
+            // 📡 關鍵新增：從伺服器回應標頭中，抓取檔案最後修改時間
+            const lastModifiedHeader = response.headers.get('Last-Modified');
+            let fileDateString = null;
+            
+            if (lastModifiedHeader) {
+                const fileDate = new Date(lastModifiedHeader);
+                // 轉為標準的 YYYY-MM-DD 格式
+                fileDateString = `${fileDate.getFullYear()}-${String(fileDate.getMonth() + 1).padStart(2, '0')}-${String(fileDate.getDate()).padStart(2, '0')}`;
+            }
+            
             const arrayBuffer = await response.arrayBuffer();
             
-            // 這裡我們先預留一個名稱，等等第三步會建立這個解析函式
-            processDataBuffer(arrayBuffer, "✅ 已同步伺服器最新資料");
+            // 將抓到的「真實檔案日期」當作第三個參數傳入
+            processDataBuffer(arrayBuffer, "✅ 已同步伺服器最新資料", fileDateString);
             
         } catch (error) {
             console.log("自動載入失敗，可能檔案尚未產出。請點擊按鈕手動更新。", error);
-            // 如果連伺服器都沒有檔案，就顯示原本的上傳區塊
             uploadStatus.textContent = "💡 建議上傳名單以啟動分析";
         }
     }
@@ -116,10 +124,9 @@ document.addEventListener("DOMContentLoaded", () => {
     checkCache();
     // ==========================================
 
-    // 🌟 新增：共用的資料解析與渲染函式
-    function processDataBuffer(buffer, successMessage) {
+    // 🌟 修改：支援接收真實檔案日期的解析函式
+    function processDataBuffer(buffer, successMessage, fileDate = null) {
         uploadStatus.textContent = "⏳ 讀取與分析中，請稍候...";
-        // 🌟 新增：隱藏初始提示區塊
         if (initialPrompt) initialPrompt.style.display = "none";
 
         try {
@@ -161,9 +168,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 return { ...row, extractCity: city };
             });
 
-            // 更新 LocalStorage 快取，並加入更新時間
-            const today = new Date();
-            const dateString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+            // 🧠 智慧日期判斷區塊
+            let dateString = fileDate; 
+            
+            if (!dateString) {
+                // 如果 fileDate 是空的（代表是管理員「手動上傳」本機檔案），則採用當下時間
+                const today = new Date();
+                dateString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+            }
+
+            // 將正確的日期存入 LocalStorage 快取中
             const cacheObject = {
                 lastUpdated: `更新：${dateString}`,
                 data: globalJsonData
@@ -172,18 +186,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // 更新網頁 UI 狀態
             uploadStatus.textContent = successMessage;
-            updateDate.textContent = cacheObject.lastUpdated;
+            updateDate.textContent = cacheObject.lastUpdated; // 畫面會顯示真正的新增/修改日期
             controlPanel.style.display = "flex";
             overviewView.style.display = "block";
             detailView.style.display = "none";
 
-            // 將下拉選單重置為全台總覽
             currentCity = 'all';
             cityDropdown.value = 'all';
             renderRankingTable();
 
         } catch (error) {
-            console.error("處理資料失敗:", error);
+            print("處理資料失敗:", error);
             uploadStatus.textContent = "❌ 檔案解析失敗，請確認檔案格式是否正確。";
         }
     }
