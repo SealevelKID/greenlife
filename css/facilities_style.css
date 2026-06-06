@@ -532,3 +532,30 @@ td[data-label="標章等級"]:has(:contains('銅')) span {
         transform: translateY(0); 
     }
 }
+/* =========================================
+   強制套用手機模式：頂部控制列垂直化
+========================================= */
+/* 當啟用手機模式時，強迫解除三欄並排，改為單欄上下堆疊 */
+body.mobile-mode .page-header-compact {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important;
+    padding: 1.5rem 1rem !important;
+    align-items: center !important; /* 所有區塊置中對齊 */
+}
+
+/* 解除各區塊原本靠左或靠右的設定，統一置中並允許換行 */
+body.mobile-mode .header-left, 
+body.mobile-mode .header-center, 
+body.mobile-mode .header-right {
+    width: 100% !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+}
+
+/* 確保內部元素之間的間距舒適 */
+body.mobile-mode .header-right {
+    gap: 10px !important;
+    flex-direction: column !important; /* 讓縣市選單與日期狀態上下排列 */
+    align-items: center !important;
+}
