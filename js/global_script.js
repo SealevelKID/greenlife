@@ -113,19 +113,19 @@ function initTableDownload() {
             // 【修正版】優先抓取彈出視窗 (Modal) 的標題作為檔名
             // ==========================================
             const modalTitleEl = document.getElementById('modal-year-title');
-            
+
             // 檢查視窗標題是否存在，且確認現在視窗是打開的 (display != none)
             const isModalOpen = modalTitleEl && window.getComputedStyle(modalTitleEl.closest('#chart-modal-overlay') || {}).display !== 'none';
 
             if (isModalOpen && modalTitleEl.innerText.trim() !== "") {
                 let modalText = modalTitleEl.innerText.trim();
-                
+
                 // 1. 去除括號及其中的統計文字
                 modalText = modalText.split(' (')[0].trim();
-                
+
                 // 2. 將空格轉換為底線
                 const formattedTitle = modalText.replace(/\s+/g, '_');
-                
+
                 // 3. 組合最終檔名 (直接把乾淨的標題交給它，不自己加前綴)
                 tableTitle = formattedTitle;
             } // 🌟 新增：要在這裡就把 if 關起來！
@@ -136,12 +136,12 @@ function initTableDownload() {
                 const option = select.options[select.selectedIndex];
                 if (option) {
                     const optionText = option.innerText.trim();
-                    
+
                     // 1. 處理年份：判斷是否為年份選項 (包含 '年' 或是 4位數字，且排除 '歷年' 本身)
                     if ((optionText.includes('年') || /^\d{4}$/.test(optionText)) && !optionText.includes('歷年')) {
                         // 確保格式是 "2022年" (把空白拿掉)
                         const yearStr = optionText.includes('年') ? optionText.replace(/\s+/g, '') : `${optionText}年`;
-                        
+
                         // 關鍵修改：針對各種可能的標題文字，精確插入年份
                         if (tableTitle.includes('歷年累計響應統計')) {
                             // 如果檔名是：...桃園市_歷年累計響應統計
@@ -150,17 +150,17 @@ function initTableDownload() {
                         } else if (tableTitle.includes('綠色夥伴響應統計_歷年累計')) {
                             // 如果檔名是：...高雄市_綠色夥伴響應統計_歷年累計
                             tableTitle = tableTitle.replace('綠色夥伴響應統計_歷年累計', `${yearStr}響應統計_歷年累計`);
-                            
+
                         } else if (tableTitle.includes('綠色夥伴響應統計')) {
                             // 一般情況
                             tableTitle = tableTitle.replace('綠色夥伴響應統計', `${yearStr}響應統計`);
-                            
+
                         } else if (!tableTitle.includes(yearStr)) {
                             // 防呆：如果上面的字眼都沒出現，至少把年份加在最後面
                             tableTitle += `_${yearStr}`;
                         }
-                    } 
-                    
+                    }
+
                     // 2. 處理縣市：維持你原有的邏輯不動
                     else if (select.id === 'city-dropdown' && optionText !== '請選擇縣市' && option.value !== 'all') {
                         if (!tableTitle.includes(optionText)) {
@@ -173,6 +173,9 @@ function initTableDownload() {
             const today = new Date();
             const dateString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
             const fileName = `${pageTitle}_${tableTitle}_${dateString}.csv`;
+
+            // === 新增：默默發送下載紀錄到 Google 表單 ===
+            logDownloadToGoogleForm(fileName);
 
             // 2. 處理 CSV 資料提取
             let csvContent = '\uFEFF';
@@ -256,4 +259,25 @@ function initMobileModeToggle() {
 
     // 4. 將按鈕放入網頁中
     document.body.appendChild(toggleBtn);
+}
+// ==========================================
+// 新增：背景自動提交 Google 表單紀錄函數
+// ==========================================
+function logDownloadToGoogleForm(fileName) {
+    const actionUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSdcRXoI8BsLVeJI52T02Lp8_DmWczmZeRz8Bpk8tgXAa-7Xpw/formResponse';
+    const entryId = 'entry.387104524';
+
+    // 建立表單封包
+    const formData = new FormData();
+    formData.append(entryId, fileName);
+
+    // 使用 fetch 在背景悄悄發送 POST 請求
+    // mode: 'no-cors' 是關鍵，它能防止瀏覽器因為跨網域安全性限制而跳出報錯紅字
+    fetch(actionUrl, {
+        method: 'POST',
+        body: formData,
+        mode: 'no-cors'
+    })
+    .then(() => console.log(`已成功記錄下載項目：${fileName}`))
+    .catch(err => console.error('下載紀錄發送失敗:', err));
 }
