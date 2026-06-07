@@ -1,17 +1,17 @@
 {
     "summary": {
-        "update_date": "2026-05-04",
+        "update_date": "2026-06-01",
         "total_registered_B": 356681,
-        "total_new_F": 1990,
-        "total_members": 358671
+        "total_new_F": 3020,
+        "total_members": 359701
     },
     "ranking_and_merchants": [
         {
             "county": "臺南市",
             "count": 18,
             "reg_b": 47878,
-            "new_f": 47,
-            "total_members": 47925,
+            "new_f": 126,
+            "total_members": 48004,
             "merchants": [
                 "【餐】大鋤花間咖啡生態農場",
                 "【旅】榮興金鬱金香酒店",
@@ -40,8 +40,8 @@
             "county": "臺北市",
             "count": 17,
             "reg_b": 29535,
-            "new_f": 73,
-            "total_members": 29608,
+            "new_f": 218,
+            "total_members": 29753,
             "merchants": [
                 "【餐】薆在她家烘焙坊(在她家)",
                 "【餐】呷米友善環境有限公司(JIAMI呷米友善餐廳)",
@@ -69,8 +69,8 @@
             "county": "花蓮縣",
             "count": 16,
             "reg_b": 11453,
-            "new_f": 119,
-            "total_members": 11572,
+            "new_f": 185,
+            "total_members": 11638,
             "merchants": [
                 "【旅】像個家Plus",
                 "【餐】欣綠農園",
@@ -97,8 +97,8 @@
             "county": "高雄市",
             "count": 12,
             "reg_b": 37781,
-            "new_f": 194,
-            "total_members": 37975,
+            "new_f": 244,
+            "total_members": 38025,
             "merchants": [
                 "【旅】J.S 23",
                 "【餐】拾貳拾粹商行",
@@ -121,8 +121,8 @@
             "county": "嘉義縣",
             "count": 12,
             "reg_b": 9149,
-            "new_f": 214,
-            "total_members": 9363,
+            "new_f": 219,
+            "total_members": 9368,
             "merchants": [
                 "【教】向禾休閒農場",
                 "【餐】新農豆食堂",
@@ -144,8 +144,8 @@
             "county": "屏東縣",
             "count": 12,
             "reg_b": 13188,
-            "new_f": 84,
-            "total_members": 13272,
+            "new_f": 172,
+            "total_members": 13360,
             "merchants": [
                 "【餐】甲板上景觀",
                 "【旅】椰林之家民宿",
@@ -261,8 +261,8 @@
             "county": "南投縣",
             "count": 9,
             "reg_b": 3328,
-            "new_f": 0,
-            "total_members": 3328,
+            "new_f": 74,
+            "total_members": 3402,
             "merchants": [
                 "【旅】承萬尊爵酒店",
                 "【教】茄荖山環保生態園區",
@@ -282,8 +282,8 @@
             "county": "嘉義市",
             "count": 8,
             "reg_b": 5909,
-            "new_f": 0,
-            "total_members": 5909,
+            "new_f": 34,
+            "total_members": 5943,
             "merchants": [
                 "【旅】兆品酒店",
                 "【旅餐】新悅花園酒店股份有限公司(頤粵軒)",
@@ -301,8 +301,8 @@
             "county": "臺中市",
             "count": 7,
             "reg_b": 35068,
-            "new_f": 51,
-            "total_members": 35119,
+            "new_f": 99,
+            "total_members": 35167,
             "merchants": [
                 "【餐】滬舍餘味餐館",
                 "【餐】御饌園麵食館(御饌臻品)",
@@ -338,8 +338,8 @@
             "county": "新竹市",
             "count": 6,
             "reg_b": 10014,
-            "new_f": 51,
-            "total_members": 10065,
+            "new_f": 337,
+            "total_members": 10351,
             "merchants": [
                 "【餐】炙同稻盒(麥大叔複合式餐廳)",
                 "【旅】迎曦大飯店",
@@ -355,8 +355,8 @@
             "county": "雲林縣",
             "count": 6,
             "reg_b": 11142,
-            "new_f": 22,
-            "total_members": 11164,
+            "new_f": 33,
+            "total_members": 11175,
             "merchants": [
                 "【教】晁陽綠能休閒農場",
                 "【餐】生機食品行(生機廚房虎尾店)",
@@ -373,8 +373,8 @@
             "county": "金門縣",
             "count": 5,
             "reg_b": 3707,
-            "new_f": 45,
-            "total_members": 3752,
+            "new_f": 76,
+            "total_members": 3783,
             "merchants": [
                 "【教】尚義環保公園",
                 "【教】金門縣水產試驗所",
@@ -408,8 +408,8 @@
             "county": "臺東縣",
             "count": 4,
             "reg_b": 6855,
-            "new_f": 120,
-            "total_members": 6975,
+            "new_f": 174,
+            "total_members": 7029,
             "merchants": [
                 "【餐】七里坡有限公司(七里坡紅藜養生料理)",
                 "【餐】拿手菜餐坊(回家食間)",
@@ -423,8 +423,8 @@
             "county": "苗栗縣",
             "count": 3,
             "reg_b": 10852,
-            "new_f": 79,
-            "total_members": 10931,
+            "new_f": 138,
+            "total_members": 10990,
             "merchants": [
                 "【餐】彌而蔬食人文咖啡館",
                 "【餐】花巷草弄咖啡屋",
