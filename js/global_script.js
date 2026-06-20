@@ -261,23 +261,42 @@ function initMobileModeToggle() {
     document.body.appendChild(toggleBtn);
 }
 // ==========================================
-// 新增：背景自動提交 Google 表單紀錄函數
+// 新增：背景自動提交 Google 表單紀錄函數 (隱藏框架法)
 // ==========================================
 function logDownloadToGoogleForm(fileName) {
     const actionUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSdcRXoI8BsLVeJI52T02Lp8_DmWczmZeRz8Bpk8tgXAa-7Xpw/formResponse';
     const entryId = 'entry.387104524';
 
-    // 建立表單封包
-    const formData = new FormData();
-    formData.append(entryId, fileName);
+    // 1. 建立一個隱藏的 iframe 作為接收目標，確保畫面不會跳轉
+    const iframeName = 'hidden_iframe_' + Date.now();
+    const iframe = document.createElement('iframe');
+    iframe.name = iframeName;
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
 
-    // 使用 fetch 在背景悄悄發送 POST 請求
-    // mode: 'no-cors' 是關鍵，它能防止瀏覽器因為跨網域安全性限制而跳出報錯紅字
-    fetch(actionUrl, {
-        method: 'POST',
-        body: formData,
-        mode: 'no-cors'
-    })
-    .then(() => console.log(`已成功記錄下載項目：${fileName}`))
-    .catch(err => console.error('下載紀錄發送失敗:', err));
+    // 2. 建立一個虛擬的 HTML 表單
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = actionUrl;
+    form.target = iframeName; // 將表單送出結果導向隱藏的 iframe
+    form.style.display = 'none';
+
+    // 3. 建立輸入框並填入資料 (就像真實的表單欄位)
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.name = entryId;
+    input.value = fileName;
+    form.appendChild(input);
+
+    // 4. 將這些隱形元素加入網頁並按下「送出」
+    document.body.appendChild(form);
+    form.submit();
+    
+    console.log(`📥 嘗試透過隱藏表單送出紀錄：${fileName}`);
+
+    // 5. 兩秒後，把用完的隱形表單跟框架從網頁上掃掉，保持網頁乾淨
+    setTimeout(() => {
+        if (document.body.contains(form)) document.body.removeChild(form);
+        if (document.body.contains(iframe)) document.body.removeChild(iframe);
+    }, 2000);
 }
