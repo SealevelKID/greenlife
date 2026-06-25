@@ -19,7 +19,7 @@ def fetch_and_process_data():
     api_url = f"https://data.moenv.gov.tw/api/v2/EEDU_S_01?api_key={api_key}&format=json&limit=1000"
     
     try:
-        print("正在連線至環境部開放資料平台...")
+        print("正在連線至環境部開放資料平臺...")
         context = ssl._create_unverified_context()
         
         # 升級 2：換上更完整的「人類披風」，模擬最新的 Windows Chrome 瀏覽器，並聲明接受 JSON
@@ -51,11 +51,11 @@ def fetch_and_process_data():
     # 縣市對照表 (完整版)
     city_mapping = {
         # 直轄市
-        "臺北市": "taipei", "台北市": "taipei",
+        "臺北市": "taipei", "臺北市": "taipei",
         "新北市": "new-taipei",
         "桃園市": "taoyuan",
-        "臺中市": "taichung", "台中市": "taichung",
-        "臺南市": "tainan", "台南市": "tainan",
+        "臺中市": "taichung", "臺中市": "taichung",
+        "臺南市": "tainan", "臺南市": "tainan",
         "高雄市": "kaohsiung",
         
         # 其他縣市
@@ -71,7 +71,7 @@ def fetch_and_process_data():
         "屏東縣": "pingtung",
         "宜蘭縣": "yilan",
         "花蓮縣": "hualien",
-        "臺東縣": "taitung", "台東縣": "taitung",
+        "臺東縣": "taitung", "臺東縣": "taitung",
         "澎湖縣": "penghu",
         "金門縣": "kinmen",
         "連江縣": "lienchiang"
@@ -117,7 +117,7 @@ def fetch_and_process_data():
     with open('data/facilities.json', 'w', encoding='utf-8') as f:
         json.dump(final_json, f, ensure_ascii=False, indent=4)
     
-    print("✅ 全台資料處理完成，已成功更新 facilities.json 檔案！")
+    print("✅ 全臺資料處理完成，已成功更新 facilities.json 檔案！")
 
 if __name__ == "__main__":
     fetch_and_process_data()
