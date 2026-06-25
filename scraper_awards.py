@@ -15,16 +15,16 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 # 縣市對照表
 CITY_MAPPING = {
-    "臺北市": "taipei", "台北市": "taipei", "新北市": "new-taipei", "桃園市": "taoyuan",
-    "臺中市": "taichung", "台中市": "taichung", "臺南市": "tainan", "台南市": "tainan",
+    "臺北市": "taipei", "臺北市": "taipei", "新北市": "new-taipei", "桃園市": "taoyuan",
+    "臺中市": "taichung", "臺中市": "taichung", "臺南市": "tainan", "臺南市": "tainan",
     "高雄市": "kaohsiung", "基隆市": "keelung", "新竹市": "hsinchu-city", "新竹縣": "hsinchu-county",
     "苗栗縣": "miaoli", "彰化縣": "changhua", "南投縣": "nantou", "雲林縣": "yunlin",
     "嘉義市": "chiayi-city", "嘉義縣": "chiayi-county", "屏東縣": "pingtung", "宜蘭縣": "yilan",
-    "花蓮縣": "hualien", "臺東縣": "taitung", "台東縣": "taitung", "澎湖縣": "penghu", 
+    "花蓮縣": "hualien", "臺東縣": "taitung", "臺東縣": "taitung", "澎湖縣": "penghu", 
     "金門縣": "kinmen", "連江縣": "lienchiang"
 }
 
-REVERSE_MAPPING = {v: k for k, v in CITY_MAPPING.items() if "台" not in k} 
+REVERSE_MAPPING = {v: k for k, v in CITY_MAPPING.items() if "臺" not in k} 
 
 def scrape_corporate_awards_ultimate():
     print("🚀 啟動【國家企業環保獎】精準視力版爬蟲 (直接抓取縣市欄位)...")
