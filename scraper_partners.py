@@ -14,14 +14,14 @@ USER_AGENTS = [
     'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
 ]
 
-# 沿用你專案中的縣市中英文對照表
+# 沿用專案中的縣市中英文對照表 (統一使用「臺」)
 CITY_MAPPING = {
-    "臺北市": "taipei", "臺北市": "taipei", "新北市": "new-taipei", "桃園市": "taoyuan",
-    "臺中市": "taichung", "臺中市": "taichung", "臺南市": "tainan", "臺南市": "tainan",
+    "臺北市": "taipei", "新北市": "new-taipei", "桃園市": "taoyuan",
+    "臺中市": "taichung", "臺南市": "tainan",
     "高雄市": "kaohsiung", "基隆市": "keelung", "新竹市": "hsinchu-city", "新竹縣": "hsinchu-county",
     "苗栗縣": "miaoli", "彰化縣": "changhua", "南投縣": "nantou", "雲林縣": "yunlin",
     "嘉義市": "chiayi-city", "嘉義縣": "chiayi-county", "屏東縣": "pingtung", "宜蘭縣": "yilan",
-    "花蓮縣": "hualien", "臺東縣": "taitung", "臺東縣": "taitung", "澎湖縣": "penghu", 
+    "花蓮縣": "hualien", "臺東縣": "taitung", "澎湖縣": "penghu", 
     "金門縣": "kinmen", "連江縣": "lienchiang"
 }
 
@@ -47,7 +47,7 @@ def scrape_and_aggregate_partners():
         data = json.dumps(payload).encode('utf-8')
         current_ua = random.choice(USER_AGENTS)
         
-        # 🌟 新增：從系統環境讀取金鑰，並加上防呆機制
+        # 🌟 從系統環境讀取金鑰，並加上防呆機制
         api_key = os.getenv("GREEN_PARTNER_API_KEY")
         if not api_key:
             print("❌ 找不到 GREEN_PARTNER_API_KEY，請確認 GitHub Secrets 是否已設定！")
@@ -59,10 +59,10 @@ def scrape_and_aggregate_partners():
             'Accept': '*/*',
             'Origin': 'https://greenlifestyle.moenv.gov.tw',
             'Referer': f'https://greenlifestyle.moenv.gov.tw/categories/green_office/participate?page={page}',
-            'x-api-key': api_key  # 🌟 替換這裡：改用變數傳遞
+            'x-api-key': api_key  
         }
         
-        # === 局部修改：加入重試迴圈 ===
+        # 加入重試迴圈
         max_retries = 3
         success_fetch = False
         
@@ -81,15 +81,28 @@ def scrape_and_aggregate_partners():
                         success_fetch = True
                         break 
                         
+                    # ==========================================
+                    # 🌟 資料清洗核心區塊 (處理台/臺與空白)
+                    # ==========================================
                     for item in data_list:
+                        # 1. 取得原始字串
                         raw_city = item.get('cityName', '未知縣市')
-                        city_code = CITY_MAPPING.get(raw_city, 'other')
+                        
+                        # 2. 清洗與正規化
+                        if raw_city:
+                            # strip() 刪除隱形空白，replace() 強制統一把台轉成臺
+                            clean_city = raw_city.strip().replace('台', '臺')
+                        else:
+                            clean_city = '未知縣市'
+                        
+                        # 3. 使用洗乾淨的名稱去對應代碼
+                        city_code = CITY_MAPPING.get(clean_city, 'other')
                         year = item.get('createTime', '0000-')[:4]
                         identity = item.get('identityName', '其他')
                         
                         if city_code not in aggregated_data:
-                            aggregated_data[city_code] = {"cityName": raw_city, "history": {}}
-                        
+                            aggregated_data[city_code] = {"cityName": clean_city, "history": {}}
+                            
                         if year not in aggregated_data[city_code]["history"]:
                             aggregated_data[city_code]["history"][year] = {"總數": 0}
                             
@@ -100,6 +113,7 @@ def scrape_and_aggregate_partners():
                         aggregated_data[city_code]["history"][year][identity] += 1
                         
                         total_records_processed += 1
+                    # ==========================================
                         
                     print(f"  └ 成功解析 {len(data_list)} 筆資料，累積處理 {total_records_processed} 筆...")
                     
