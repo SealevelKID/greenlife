@@ -69,8 +69,23 @@ def main():
     
     try:
         for index, row in df.iterrows():
-            # 🌟 使用自動偵測到的欄位名稱 (hotel_col)
-            hotel_name = str(row[hotel_col]).strip()
+            # 1. 取得原始名稱
+            raw_name = str(row[hotel_col])
+            
+            # 2. 終極防呆：攔截 Excel 的隱形空白行
+            # 當 pandas 讀到空行時，會把它轉成字串 "nan"。我們直接跳過，避免拿 "nan" 去搜尋
+            if raw_name.lower() == 'nan' or not raw_name.strip():
+                print(f"[{index + 1}/{total_rows}] ⚠️ 發現空行或無名稱，自動跳過...")
+                df.at[index, '證書到期日'] = "無名稱"
+                continue
+
+            # 3. 清洗魔法：去除多餘空白，並將所有的「台」強制轉成「臺」
+            hotel_name = raw_name.strip().replace('台', '臺')
+
+            # 4. 順手把洗乾淨的「臺」存回 DataFrame 中
+            # 這樣等一下輸出的『環保旅宿_Selenium結果.xlsx』裡面的字體也會是完美統一的！
+            df.at[index, hotel_col] = hotel_name
+
             print(f"[{index + 1}/{total_rows}] 正在查詢: {hotel_name} ...", end=" ")
 
             # 環境部搜尋網址
@@ -109,8 +124,8 @@ def main():
                 print(f"❌ 查詢超時或出錯")
                 df.at[index, '證書到期日'] = "連線超時"
 
-            # 模擬人類行為休息
-            time.sleep(random.uniform(1, 2))
+            # 模擬人類行為休息 (採用更安全的擬真間隔)
+            time.sleep(random.uniform(1.5, 3.5))
 
     finally:
         driver.quit() # 務必關閉瀏覽器
