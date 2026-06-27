@@ -97,6 +97,15 @@ def scrape_and_aggregate_partners():
                         
                         # 3. 使用洗乾淨的名稱去對應代碼
                         city_code = CITY_MAPPING.get(clean_city, 'other')
+                        
+                        # 🚨 終極防線：如果是未知縣市，印出通緝令，然後「直接跳過」不統計！
+                        if city_code == 'other':
+                            # 嘗試抓出這個神祕單位的名稱，供日後在 Action 日誌中查看
+                            org_name = item.get('participateName', item.get('name', '某個神秘單位'))
+                            year_temp = item.get('createTime', '0000-')[:4]
+                            print(f"🚨 攔截到幽靈資料！單位：【{org_name}】 / 年份：{year_temp} / 原因：未填寫有效縣市")
+                            continue  # 使用 continue 直接結束這回合，不把這筆資料寫入最終 JSON 中
+
                         year = item.get('createTime', '0000-')[:4]
                         identity = item.get('identityName', '其他')
                         
