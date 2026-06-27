@@ -81,7 +81,7 @@ def fetch_and_process_data():
     print("正在執行資料清洗與格式轉換...")
 
     for item in raw_records:
-        address = item.get("address", "")
+        address = item.get("address", "").strip().replace('台', '臺')
         org_name = item.get("org_name", "無資料")
         applicant = item.get("applicant", "無資料")
         cert_date = item.get("cert_date", "無資料")
