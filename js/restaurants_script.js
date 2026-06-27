@@ -66,11 +66,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 擴充字典：包含縣轄市的精準對應
     const cityMapping = {
-        "臺北市": "台北市", "台北市": "台北市",
+        "臺北市": "臺北市", "臺北市": "臺北市",
         "新北市": "新北市",
         "桃園市": "桃園市", "桃園縣": "桃園市",
-        "臺中市": "台中市", "台中市": "台中市",
-        "臺南市": "台南市", "台南市": "台南市",
+        "臺中市": "臺中市", "臺中市": "臺中市",
+        "臺南市": "臺南市", "臺南市": "臺南市",
         "高雄市": "高雄市",
         "基隆市": "基隆市",
         "新竹市": "新竹市",
@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "屏東縣": "屏東縣", "屏東市": "屏東縣",
         "宜蘭縣": "宜蘭縣", "宜蘭市": "宜蘭縣",
         "花蓮縣": "花蓮縣", "花蓮市": "花蓮縣",
-        "臺東縣": "台東縣", "台東縣": "台東縣", "臺東市": "台東縣", "台東市": "台東縣",
+        "臺東縣": "臺東縣", "臺東縣": "臺東縣", "臺東市": "臺東縣", "臺東市": "臺東縣",
 
         "澎湖縣": "澎湖縣", "馬公市": "澎湖縣",
         "金門縣": "金門縣",
@@ -93,9 +93,13 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     function extractCity(address, name) {
-        let textToSearch = (address || "") + (name || "");
+        // 🌟 進入函數的瞬間，立刻把傳進來的字串洗乾淨（將所有的台替換成臺）
+        address = (address || "").replace(/台/g, '臺');
+        name = (name || "").replace(/台/g, '臺');
+        
+        let textToSearch = address + name;
 
-        // 1. 嚴格對照字典表
+        // 1. 嚴格對照字典表 (例如看到"屏東市"會自動轉成"屏東縣")
         for (const [key, value] of Object.entries(cityMapping)) {
             if (textToSearch.includes(key)) return value;
         }
