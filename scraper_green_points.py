@@ -47,7 +47,8 @@ def fetch_and_process_data():
         ranking_and_merchants = []
 
         for index, row in df.iterrows():
-            county = str(row.iloc[0]).strip()
+            # 🌟 清洗魔法：去除多餘空白，強制把台轉成臺
+            county = str(row.iloc[0]).strip().replace('台', '臺')
             
             # 【新增功能 2】精準過濾：如果字數大於 5，或者結尾不是「市」跟「縣」，就跳過不處理！
             if not county or len(county) > 5 or not (county.endswith('市') or county.endswith('縣')):
