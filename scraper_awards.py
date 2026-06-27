@@ -24,7 +24,7 @@ CITY_MAPPING = {
     "金門縣": "kinmen", "連江縣": "lienchiang"
 }
 
-REVERSE_MAPPING = {v: k for k, v in CITY_MAPPING.items() if "臺" not in k} 
+REVERSE_MAPPING = {v: k for k, v in CITY_MAPPING.items()}
 
 def scrape_corporate_awards_ultimate():
     print("🚀 啟動【國家企業環保獎】精準視力版爬蟲 (直接抓取縣市欄位)...")
@@ -105,10 +105,13 @@ def scrape_corporate_awards_ultimate():
                     edition_num = re.search(r'\d+', last_edition)
                     clean_edition = edition_num.group(0) if edition_num else last_edition
 
-                    # 【精準分類】直接比對抓下來的縣市名稱
+                    # 🌟 清洗魔法：去除多餘空白，強制把台轉成臺
+                    clean_city = city_raw.strip().replace('台', '臺')
+
+                    # 【精準分類】直接比對洗乾淨的縣市名稱
                     city_code = "other"
                     for zh_city, en_city in CITY_MAPPING.items():
-                        if zh_city in city_raw:
+                        if zh_city in clean_city:  # ⬅️ 這裡改成比對 clean_city
                             city_code = en_city
                             break
                     
