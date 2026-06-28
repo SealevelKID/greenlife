@@ -67,6 +67,9 @@ def main():
     total_rows = len(df)
     print("🚀 開始透過模擬瀏覽器爬取日期...\n")
     
+    # 🌟 新增：準備一個空籃子，用來裝找不到日期的旅宿
+    manual_check_list = []
+    
     try:
         for index, row in df.iterrows():
             # 1. 取得原始名稱
@@ -125,6 +128,14 @@ def main():
                 print(f"❌ 查詢超時或出錯")
                 df.at[index, '證書到期日'] = "連線超時"
 
+            # 🌟 新增：檢查剛才存入的狀態，如果有異常，就抄寫到小本本裡
+            current_status = df.at[index, '證書到期日']
+            if current_status in ["查無資料", "格式異常", "連線超時", "無名稱"]:
+                manual_check_list.append({
+                    "旅宿名稱": hotel_name,
+                    "異常原因": current_status
+                })
+
             # 模擬人類行為休息 (採用更安全的擬真間隔)
             time.sleep(random.uniform(1.5, 3.5))
 
@@ -134,6 +145,15 @@ def main():
     output_file = '環保旅宿_Selenium結果.xlsx'
     df.to_excel(output_file, index=False)
     print(f"\n🎉 任務結束！新檔案已儲存。")
+
+    # 🌟 新增：把收集到的小本本獨立匯出成 Excel 檔
+    if manual_check_list:
+        error_df = pd.DataFrame(manual_check_list)
+        error_file = '環保旅宿_需人工確認名單.xlsx'
+        error_df.to_excel(error_file, index=False)
+        print(f"⚠️ 發現 {len(manual_check_list)} 筆找不到日期的旅宿，已獨立匯出至：{error_file}")
+    else:
+        print("🌟 太棒了！所有旅宿都成功抓到日期，沒有需要人工確認的名單。")
 
 # 👇 確保最後這兩行存在，程式才會真正啟動
 if __name__ == "__main__":
