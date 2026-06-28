@@ -411,22 +411,33 @@ document.addEventListener("DOMContentLoaded", () => {
             // 🌟 強制轉為字串
             const rawDateStr = String(item['到期日'] || item['證書到期日'] || "");
             const level = item['環保作為'] || "一般環保旅宿";
-            
+
             let badgeType = 'none';
             let displayDate = rawDateStr; // 準備一個最終要顯示的變數
 
+            // 🌟 終極防護：如果發現 Excel 送來的是 5 位數的神祕代碼 (例如 46147)
+            let safeDateStr = rawDateStr;
+            if (/^\d{5}$/.test(safeDateStr)) {
+                const excelDays = parseInt(safeDateStr, 10);
+                // 將 Excel 的天數轉換回真實世界的日期 (25569 是系統基礎日期的天數差)
+                const realDate = new Date((excelDays - 25569) * 86400 * 1000);
+                // 重新組裝成 YYYY/MM/DD 讓下面的整容機接手處理
+                safeDateStr = `${realDate.getFullYear()}/${realDate.getMonth() + 1}/${realDate.getDate()}`;
+            }
+
             // 排除掉文字訊息後，開始處理日期
-            if (rawDateStr && !rawDateStr.includes("查無") && !rawDateStr.includes("未登") && !rawDateStr.includes("異常") && !rawDateStr.includes("超時")) {
+            // ⚠️ 注意：這裡的判斷式要把 rawDateStr 改成剛剛處理過的 safeDateStr
+            if (safeDateStr && !safeDateStr.includes("查無") && !safeDateStr.includes("未登") && !safeDateStr.includes("異常") && !safeDateStr.includes("超時")) {
                 
                 // 🌟 整容機：容許單數的月份與日期 (\d{1,2})
-                const dateMatch = rawDateStr.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
-                
+                const dateMatch = safeDateStr.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+
                 if (dateMatch) {
                     const year = dateMatch[1];
                     // padStart(2, '0') 會把單數的 5 變成 05，雙數的 11 維持 11
                     const month = dateMatch[2].padStart(2, '0');
                     const day = dateMatch[3].padStart(2, '0');
-                    
+
                     // 統一覆蓋成完美的畫面格式
                     displayDate = `${year}/${month}/${day}`;
 
@@ -472,10 +483,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // 🌟 擴充判定：如果沒有填寫(空值)，或是包含任何爬蟲報錯訊息，通通顯示官網查詢連結
             if (!data.displayDate || data.displayDate.includes("查無") || data.displayDate.includes("未登") || data.displayDate.includes("異常") || data.displayDate.includes("超時")) {
-                
+
                 const searchKeyword = (data['旅店名稱'] || "").replace(/臺/g, '台');
                 const searchUrl = `https://greenlifestyle.moenv.gov.tw/categories/greenProductSearch?searched=true&k=${encodeURIComponent(searchKeyword)}`;
-                
+
                 // 套用 manual-search-link 樣式類別
                 statusHtml = `<a href="${searchUrl}" target="_blank" class="manual-search-link">官網查詢</a>`;
             } else {
