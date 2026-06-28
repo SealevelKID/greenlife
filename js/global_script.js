@@ -43,6 +43,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     // === 5. 新增：手機模式懸浮按鈕與跨頁記憶邏輯 ===
     initMobileModeToggle();
+
+    // === 6. 自動在頁尾加入免責聲明警語 ===
+    const footer = document.querySelector('footer');
+    if (footer) {
+        const disclaimer = document.createElement('div');
+        disclaimer.textContent = "※ 網頁資料可能有誤，請至官方網頁確認";
+        
+        // 微調外觀：設定字體大小、顏色（柔和的灰色帶點專業感）與上方間距
+        disclaimer.style.fontSize = "0.85rem";
+        disclaimer.style.color = "#6b7280"; 
+        disclaimer.style.marginTop = "10px";
+        disclaimer.style.letterSpacing = "1px";
+        
+        // 將警語塞入頁尾的最下方
+        footer.appendChild(disclaimer);
+    }
 });
 
 // ==========================================
