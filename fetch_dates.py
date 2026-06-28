@@ -88,8 +88,9 @@ def main():
 
             print(f"[{index + 1}/{total_rows}] 正在查詢: {hotel_name} ...", end=" ")
 
-            # 環境部搜尋網址
-            search_url = f"https://greenlifestyle.moenv.gov.tw/categories/greenProductSearch?searched=true&k={hotel_name}"
+            # 環境部搜尋網址 (🌟 搜尋時偷偷把臺換回台，迎合政府系統)
+            search_keyword = hotel_name.replace('臺', '台')
+            search_url = f"https://greenlifestyle.moenv.gov.tw/categories/greenProductSearch?searched=true&k={search_keyword}"
 
             try:
                 driver.get(search_url)
