@@ -54,13 +54,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (cachedString) {
             try {
                 const cachedData = JSON.parse(cachedString);
-                
+
                 // 直接使用快取資料
                 globalJsonData = cachedData.data;
 
                 // 更新 UI，顯示使用快取
                 uploadStatus.textContent = "✅ 已載入伺服器最新資料";
-                
+
                 controlPanel.style.display = "flex";
                 overviewView.style.display = "block";
                 detailView.style.display = "none";
@@ -68,12 +68,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 currentCity = 'all';
                 cityDropdown.value = 'all';
                 renderRankingTable();
-                
+
                 // 如果有儲存時間，更新畫面上的時間
                 if (cachedData.lastUpdated) {
                     updateDate.textContent = cachedData.lastUpdated;
                 }
-                
+
                 return true;
             } catch (e) {
                 console.error("讀取快取失敗，將重新下載", e);
@@ -84,27 +84,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     // 🌟 修改：主動從伺服器抓取檔案的函式（加入最後修改時間偵測）
     async function autoLoadFromServer() {
-        const filePath = './環保旅宿_Selenium結果.xlsx'; 
-        
+        const filePath = './環保旅宿_Selenium結果.xlsx';
+
         try {
             const response = await fetch(filePath);
             if (!response.ok) throw new Error('伺服器上找不到檔案');
-            
+
             // 📡 關鍵新增：從伺服器回應標頭中，抓取檔案最後修改時間
             const lastModifiedHeader = response.headers.get('Last-Modified');
             let fileDateString = null;
-            
+
             if (lastModifiedHeader) {
                 const fileDate = new Date(lastModifiedHeader);
                 // 轉為標準的 YYYY-MM-DD 格式
                 fileDateString = `${fileDate.getFullYear()}-${String(fileDate.getMonth() + 1).padStart(2, '0')}-${String(fileDate.getDate()).padStart(2, '0')}`;
             }
-            
+
             const arrayBuffer = await response.arrayBuffer();
-            
+
             // 將抓到的「真實檔案日期」當作第三個參數傳入
             processDataBuffer(arrayBuffer, "✅ 已同步伺服器最新資料", fileDateString);
-            
+
         } catch (error) {
             console.log("自動載入失敗，可能檔案尚未產出。請點擊按鈕手動更新。", error);
             uploadStatus.textContent = "💡 建議上傳名單以啟動分析";
@@ -135,9 +135,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const workbook = XLSX.read(data, { type: 'array' });
             const firstSheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[firstSheetName];
-            
-            // 轉成 JSON
-            const rawJsonData = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+
+            // 🌟 加入 raw: false，強制讓 Excel 裡的所有日期數字都轉成純文字，避免當機！
+            const rawJsonData = XLSX.utils.sheet_to_json(worksheet, { defval: "", raw: false });
 
             // 🌟 新增：自動點亮左上角進度指示燈
             if (rawJsonData.length > 0) {
@@ -145,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const hasDateColumn = ('證書到期日' in firstRow) || ('到期日' in firstRow);
                 const step1El = document.getElementById('status-step1');
                 const step2El = document.getElementById('status-step2');
-                
+
                 if (step1El && step2El) {
                     step1El.innerHTML = '✅ 1. 旅宿名單';
                     step1El.style.color = '#059669';
@@ -169,8 +169,8 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             // 🧠 智慧日期判斷區塊
-            let dateString = fileDate; 
-            
+            let dateString = fileDate;
+
             if (!dateString) {
                 // 如果 fileDate 是空的（代表是管理員「手動上傳」本機檔案），則採用當下時間
                 const today = new Date();
@@ -253,7 +253,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 const workbook = XLSX.read(data, { type: 'array' });
                 const firstSheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[firstSheetName];
-                const rawJsonData = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+                // 🌟 加入 raw: false，強制讓 Excel 裡的所有日期數字都轉成純文字，避免當機！
+                const rawJsonData = XLSX.utils.sheet_to_json(worksheet, { defval: "", raw: false });
 
                 // ==========================================
                 // 【保留】防呆模式：檢查是否傳錯檔案
@@ -324,10 +325,10 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             const tr = document.createElement('tr');
-            
+
             // 加入這兩行：綁定 class 樣式與點擊事件
-            tr.className = 'clickable-row'; 
-            tr.onclick = () => selectCity(item.city); 
+            tr.className = 'clickable-row';
+            tr.onclick = () => selectCity(item.city);
 
             tr.innerHTML = `
                 <td>${currentRank}</td>
@@ -407,7 +408,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // 預處理每一筆資料的日期與狀態
         const processedRecords = cityRecords.map(item => {
-            const dateStr = item['到期日'] || item['證書到期日'] || "";
+            // 🌟 強制轉為字串 (String)，徹底預防 .includes() 崩潰
+            const dateStr = String(item['到期日'] || item['證書到期日'] || "");
             const level = item['環保作為'] || "一般環保旅宿";
             let badgeType = 'none';
 
@@ -453,9 +455,9 @@ document.addEventListener("DOMContentLoaded", () => {
             // --- 修改後的邏輯：處理到期日與自動連結 ---
             let statusHtml = data.displayDate;
 
-            // 判斷是否為「查無資料」或「未登錄」，若是則轉為超連結
-            if (data.displayDate.includes("查無資料") || data.displayDate.includes("未登錄")) {
-                // 🌟 關鍵修正：專為搜尋引擎設計的退讓機制。將名稱裡的「臺」轉回「台」
+            // 🌟 擴充判定：如果沒有填寫(空值)，或是包含任何爬蟲報錯訊息，通通顯示官網查詢連結
+            if (!data.displayDate || data.displayDate.includes("查無") || data.displayDate.includes("未登") || data.displayDate.includes("異常") || data.displayDate.includes("超時")) {
+                
                 const searchKeyword = (data['旅店名稱'] || "").replace(/臺/g, '台');
                 const searchUrl = `https://greenlifestyle.moenv.gov.tw/categories/greenProductSearch?searched=true&k=${encodeURIComponent(searchKeyword)}`;
                 
