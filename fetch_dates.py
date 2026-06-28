@@ -102,7 +102,7 @@ def main():
                 )
                 
                 # 稍微多等一下讓 JS 跑完
-                time.sleep(1.5)
+                time.sleep(3.5)
                 
                 page_text = driver.find_element(By.TAG_NAME, "body").text
                 
