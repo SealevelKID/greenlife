@@ -408,19 +408,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // 預處理每一筆資料的日期與狀態
         const processedRecords = cityRecords.map(item => {
-            // 🌟 強制轉為字串 (String)，徹底預防 .includes() 崩潰
-            const dateStr = String(item['到期日'] || item['證書到期日'] || "");
+            // 🌟 強制轉為字串
+            const rawDateStr = String(item['到期日'] || item['證書到期日'] || "");
             const level = item['環保作為'] || "一般環保旅宿";
+            
             let badgeType = 'none';
+            let displayDate = rawDateStr; // 準備一個最終要顯示的變數
 
-            // 關鍵需求 1：8個月警示判斷
-            if (dateStr && !dateStr.includes("查無") && !dateStr.includes("未登錄")) {
-                const dateMatch = dateStr.match(/(\d{4})[\/\-](\d{2})[\/\-](\d{2})/);
+            // 排除掉文字訊息後，開始處理日期
+            if (rawDateStr && !rawDateStr.includes("查無") && !rawDateStr.includes("未登") && !rawDateStr.includes("異常") && !rawDateStr.includes("超時")) {
+                
+                // 🌟 整容機：容許單數的月份與日期 (\d{1,2})
+                const dateMatch = rawDateStr.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+                
                 if (dateMatch) {
-                    const expireDate = new Date(`${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}`);
+                    const year = dateMatch[1];
+                    // padStart(2, '0') 會把單數的 5 變成 05，雙數的 11 維持 11
+                    const month = dateMatch[2].padStart(2, '0');
+                    const day = dateMatch[3].padStart(2, '0');
+                    
+                    // 統一覆蓋成完美的畫面格式
+                    displayDate = `${year}/${month}/${day}`;
+
+                    // 使用標準化後的日期來計算是否過期
+                    const expireDate = new Date(`${year}-${month}-${day}`);
                     const today = new Date();
                     const warningThreshold = new Date();
-                    warningThreshold.setMonth(today.getMonth() + 8); // 設定 8 個月期限
+                    warningThreshold.setMonth(today.getMonth() + 8);
 
                     if (expireDate < today) {
                         badgeType = 'expired';
@@ -430,7 +444,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            return { ...item, displayDate: dateStr, displayLevel: level, badgeType };
+            // 把洗得很漂亮的 displayDate 傳遞出去
+            return { ...item, displayDate: displayDate, displayLevel: level, badgeType };
         });
 
         // 更新狀態橫幅
