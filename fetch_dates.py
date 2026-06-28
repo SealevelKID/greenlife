@@ -60,6 +60,8 @@ def main():
     chrome_options.add_argument('--window-size=1920,1080')
     # 模擬真人標頭
     chrome_options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--disable-dev-shm-usage')
 
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=chrome_options)
@@ -80,6 +82,12 @@ def main():
             if raw_name.lower() == 'nan' or not raw_name.strip():
                 print(f"[{index + 1}/{total_rows}] ⚠️ 發現空行或無名稱，自動跳過...")
                 df.at[index, '證書到期日'] = "無名稱"
+                
+                # 新增這段：在跳過前先記錄下來
+                manual_check_list.append({
+                    "旅宿名稱": f"第 {index + 1} 行：空白欄位",
+                    "異常原因": "無名稱"
+                })
                 continue
 
             # 3. 清洗魔法：去除多餘空白，並將所有的「台」強制轉成「臺」
@@ -101,7 +109,7 @@ def main():
                 # 🌟 關鍵：等待「證書效期」這幾個字出現在網頁上 (最多等 10 秒)
                 # 這能解決「內容可能動態載入中」的問題
                 WebDriverWait(driver, 10).until(
-                    EC.presence_of_element_located((By.TAG_NAME, "body"))
+                    lambda d: any(kw in d.find_element(By.TAG_NAME, "body").text for kw in ["證書效期", "查無資料", "0筆"])
                 )
                 
                 # 稍微多等一下讓 JS 跑完
@@ -125,7 +133,8 @@ def main():
                         df.at[index, '證書到期日'] = "格式異常"
                         
             except Exception as e:
-                print(f"❌ 查詢超時或出錯")
+                # 修改這行，把變數 e 印出來
+                print(f"❌ 查詢超時或出錯: {e}")
                 df.at[index, '證書到期日'] = "連線超時"
 
             # 🌟 新增：檢查剛才存入的狀態，如果有異常，就抄寫到小本本裡
