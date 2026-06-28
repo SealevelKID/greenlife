@@ -455,7 +455,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // 判斷是否為「查無資料」或「未登錄」，若是則轉為超連結
             if (data.displayDate.includes("查無資料") || data.displayDate.includes("未登錄")) {
-                const searchUrl = `https://greenlifestyle.moenv.gov.tw/categories/greenProductSearch?searched=true&k=${encodeURIComponent(data['旅店名稱'])}`;
+                // 🌟 關鍵修正：專為搜尋引擎設計的退讓機制。將名稱裡的「臺」轉回「台」
+                const searchKeyword = (data['旅店名稱'] || "").replace(/臺/g, '台');
+                const searchUrl = `https://greenlifestyle.moenv.gov.tw/categories/greenProductSearch?searched=true&k=${encodeURIComponent(searchKeyword)}`;
+                
                 // 套用 manual-search-link 樣式類別
                 statusHtml = `<a href="${searchUrl}" target="_blank" class="manual-search-link">官網查詢</a>`;
             } else {
