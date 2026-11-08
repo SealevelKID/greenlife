@@ -1,17 +1,17 @@
 {
     "summary": {
-        "update_date": "2026-10-01",
+        "update_date": "2026-11-02",
         "total_registered_B": 356681,
-        "total_new_F": 6484,
-        "total_members": 363165
+        "total_new_F": 7117,
+        "total_members": 363798
     },
     "ranking_and_merchants": [
         {
             "county": "臺南市",
             "count": 20,
             "reg_b": 47878,
-            "new_f": 608,
-            "total_members": 48486,
+            "new_f": 637,
+            "total_members": 48515,
             "merchants": [
                 "【旅】臺邦商旅",
                 "【旅】關子嶺富野溫泉會館",
@@ -36,14 +36,14 @@
                 "(餐)錦城石頭火鍋"
             ],
             "rank": 1,
-            "percentage": 9.66
+            "percentage": 9.57
         },
         {
             "county": "臺北市",
             "count": 19,
             "reg_b": 29535,
-            "new_f": 765,
-            "total_members": 30300,
+            "new_f": 817,
+            "total_members": 30352,
             "merchants": [
                 "【餐】參尋味",
                 "【餐】法租界",
@@ -67,14 +67,14 @@
                 "(旅)五月家青旅股份有限公司(五月家北車館)"
             ],
             "rank": 2,
-            "percentage": 9.18
+            "percentage": 9.09
         },
         {
             "county": "花蓮縣",
             "count": 16,
             "reg_b": 11453,
-            "new_f": 311,
-            "total_members": 11764,
+            "new_f": 426,
+            "total_members": 11879,
             "merchants": [
                 "【旅】像個家Plus",
                 "【餐】欣綠農園",
@@ -95,14 +95,39 @@
                 "(旅)怡然居攝影風格民宿"
             ],
             "rank": 3,
-            "percentage": 7.73
+            "percentage": 7.66
+        },
+        {
+            "county": "桃園市",
+            "count": 13,
+            "reg_b": 30649,
+            "new_f": 134,
+            "total_members": 30783,
+            "merchants": [
+                "【旅】那河灣民宿",
+                "【旅】林口維多利亞民宿",
+                "【餐】新百王餐廳",
+                "【旅】福容大飯店(桃園機場A8)",
+                "【旅】渴望會館",
+                "【旅】林口維多利亞民宿",
+                "【旅餐】福容大飯店(桃園)、福粵樓",
+                "【教】小人國",
+                "【教】東和音樂體驗館",
+                "【店】喀布茲修惜站",
+                "【店】木匠的家",
+                "【店】布藝young",
+                "【餐】蕃薯藤",
+                "(教)郭元益"
+            ],
+            "rank": 4,
+            "percentage": 6.22
         },
         {
             "county": "高雄市",
             "count": 12,
             "reg_b": 37781,
-            "new_f": 363,
-            "total_members": 38144,
+            "new_f": 399,
+            "total_members": 38180,
             "merchants": [
                 "【餐】強海創驛站_複合式咖啡廳",
                 "【旅】J.S 23",
@@ -119,8 +144,8 @@
                 "(旅)鳳山79背包客",
                 "(餐)拾貳拾粹商行"
             ],
-            "rank": 4,
-            "percentage": 5.8
+            "rank": 5,
+            "percentage": 5.74
         },
         {
             "county": "嘉義市",
@@ -142,8 +167,8 @@
                 "【餐】三隻小兔義式冰淇淋餐廳",
                 "【餐】尊皇嚮鍋"
             ],
-            "rank": 5,
-            "percentage": 5.8
+            "rank": 6,
+            "percentage": 5.74
         },
         {
             "county": "南投縣",
@@ -167,8 +192,8 @@
                 "(教)九族文化村",
                 "(餐)溪頭青年活動中心（溪餐廳）"
             ],
-            "rank": 6,
-            "percentage": 5.8
+            "rank": 7,
+            "percentage": 5.74
         },
         {
             "county": "嘉義縣",
@@ -190,15 +215,15 @@
                 "【餐】板陶窯剪黏主題餐廳",
                 "【餐】新港客廳"
             ],
-            "rank": 7,
-            "percentage": 5.8
+            "rank": 8,
+            "percentage": 5.74
         },
         {
             "county": "屏東縣",
             "count": 12,
             "reg_b": 13188,
-            "new_f": 381,
-            "total_members": 13569,
+            "new_f": 422,
+            "total_members": 13610,
             "merchants": [
                 "【餐】甲板上景觀",
                 "【旅】椰林之家民宿",
@@ -214,8 +239,8 @@
                 "【餐】好正商行(夜宵森食屋)",
                 "(旅)勝利125民宿(勝利文旅日式民宿)"
             ],
-            "rank": 8,
-            "percentage": 5.8
+            "rank": 9,
+            "percentage": 5.74
         },
         {
             "county": "新北市",
@@ -239,31 +264,8 @@
                 "(餐)哩賀涼麵",
                 "(餐)哩賀涼麵"
             ],
-            "rank": 9,
-            "percentage": 5.31
-        },
-        {
-            "county": "桃園市",
-            "count": 11,
-            "reg_b": 30649,
-            "new_f": 123,
-            "total_members": 30772,
-            "merchants": [
-                "【餐】新百王餐廳",
-                "【旅】福容大飯店(桃園機場A8)",
-                "【旅】渴望會館",
-                "【旅】林口維多利亞民宿",
-                "【旅餐】福容大飯店(桃園)、福粵樓",
-                "【教】小人國",
-                "【教】東和音樂體驗館",
-                "【店】喀布茲修惜站",
-                "【店】木匠的家",
-                "【店】布藝young",
-                "【餐】蕃薯藤",
-                "(教)郭元益"
-            ],
             "rank": 10,
-            "percentage": 5.31
+            "percentage": 5.26
         },
         {
             "county": "澎湖縣",
@@ -287,7 +289,7 @@
                 "(餐)半日閑企業社(半日閑馬公店 Leisure Time Dining)"
             ],
             "rank": 11,
-            "percentage": 5.31
+            "percentage": 5.26
         },
         {
             "county": "彰化縣",
@@ -308,14 +310,14 @@
                 "【餐】老實人植茶製所"
             ],
             "rank": 12,
-            "percentage": 4.83
+            "percentage": 4.78
         },
         {
             "county": "臺中市",
             "count": 7,
             "reg_b": 35068,
-            "new_f": 362,
-            "total_members": 35430,
+            "new_f": 485,
+            "total_members": 35553,
             "merchants": [
                 "【餐】滬舍餘味餐館",
                 "【餐】御饌園麵食館(御饌臻品)",
@@ -327,14 +329,14 @@
                 "(旅)星漾(一中)"
             ],
             "rank": 13,
-            "percentage": 3.38
+            "percentage": 3.35
         },
         {
             "county": "新竹市",
             "count": 7,
             "reg_b": 10014,
-            "new_f": 608,
-            "total_members": 10622,
+            "new_f": 669,
+            "total_members": 10683,
             "merchants": [
                 "【旅】新竹悅豪大飯店",
                 "【餐】炙同稻盒(麥大叔複合式餐廳)",
@@ -345,7 +347,7 @@
                 "【餐】海岸風情"
             ],
             "rank": 14,
-            "percentage": 3.38
+            "percentage": 3.35
         },
         {
             "county": "宜蘭縣",
@@ -363,14 +365,14 @@
                 "【餐】謝師父上菜"
             ],
             "rank": 15,
-            "percentage": 3.38
+            "percentage": 3.35
         },
         {
             "county": "臺東縣",
             "count": 7,
             "reg_b": 6855,
-            "new_f": 180,
-            "total_members": 7035,
+            "new_f": 198,
+            "total_members": 7053,
             "merchants": [
                 "【餐】井欄樹餐館",
                 "【餐】來樂美食廚坊",
@@ -381,7 +383,7 @@
                 "【餐】天地人餐館溫度釀製所(深黑義法餐酒館)"
             ],
             "rank": 16,
-            "percentage": 3.38
+            "percentage": 3.35
         },
         {
             "county": "雲林縣",
@@ -399,14 +401,14 @@
                 "(教)劍湖山世界"
             ],
             "rank": 17,
-            "percentage": 2.9
+            "percentage": 2.87
         },
         {
             "county": "金門縣",
             "count": 5,
             "reg_b": 3707,
-            "new_f": 169,
-            "total_members": 3876,
+            "new_f": 170,
+            "total_members": 3877,
             "merchants": [
                 "【教】尚義環保公園",
                 "【教】金門縣水產試驗所",
@@ -418,7 +420,7 @@
                 "(餐)三言兩語鮮茶咖啡美食館"
             ],
             "rank": 18,
-            "percentage": 2.42
+            "percentage": 2.39
         },
         {
             "county": "基隆市",
@@ -434,14 +436,14 @@
                 "(餐)里山食堂"
             ],
             "rank": 19,
-            "percentage": 1.93
+            "percentage": 1.91
         },
         {
             "county": "苗栗縣",
             "count": 4,
             "reg_b": 10852,
-            "new_f": 241,
-            "total_members": 11093,
+            "new_f": 284,
+            "total_members": 11136,
             "merchants": [
                 "【旅】西湖渡假村",
                 "【餐】彌而蔬食人文咖啡館",
@@ -451,20 +453,20 @@
                 "(旅)水頭人家"
             ],
             "rank": 20,
-            "percentage": 1.93
+            "percentage": 1.91
         },
         {
             "county": "新竹縣",
             "count": 2,
             "reg_b": 20654,
-            "new_f": 715,
-            "total_members": 21369,
+            "new_f": 818,
+            "total_members": 21472,
             "merchants": [
                 "【餐】田土山水有限公司(不二農產直販所)",
                 "【教旅】小叮噹科學遊樂區及小叮噹生活大師會館"
             ],
             "rank": 21,
-            "percentage": 0.97
+            "percentage": 0.96
         },
         {
             "county": "連江縣",
